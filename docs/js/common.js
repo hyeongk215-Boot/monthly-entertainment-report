@@ -51,6 +51,12 @@ window.regionLabel = function (koValue, lang) {
   return item[lang || getLang()] || item.ko;
 };
 
+// 지역을 "기타"로 선택한 경우, 취합 화면에서는 지역 대신 입력받은 사무소/지점명을 표시합니다.
+window.regionDisplay = function (koValue, office, lang) {
+  if (koValue === "기타" && office) return office;
+  return window.regionLabel(koValue, lang);
+};
+
 // ===== localStorage 임시저장 =====
 // 같은 PC에서 여러 사용자(대리 작성 포함) 내역을 입력할 수 있으므로 사용자명까지 키에 포함합니다.
 window.draftKey = function (corp, region, yearmonth, submitter) {

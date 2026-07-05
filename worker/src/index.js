@@ -63,14 +63,14 @@ async function handleSubmit(request, env, origin) {
   ).bind(corp, region, yearmonth, submittedBy).run();
 
   const stmt = env.DB.prepare(
-    `INSERT INTO entries (corp, region, yearmonth, office, submitted_by, submitted_at, date, currency, amount, cny_amount, vendor, headcount, note)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    `INSERT INTO entries (corp, region, yearmonth, office, submitted_by, submitted_at, date, currency, amount, cny_amount, vendor, headcount, note, pre_approved)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   );
   const batch = rows.map((r) =>
     stmt.bind(
       corp, region, yearmonth, office || "", submittedBy, now,
       r.date || "", r.currency || "CNY", Number(r.amount) || 0, Number(r.cnyAmount) || 0,
-      r.vendor || "", Number(r.headcount) || 0, r.note || ""
+      r.vendor || "", Number(r.headcount) || 0, r.note || "", r.preApproved ? 1 : 0
     )
   );
   await env.DB.batch(batch);
@@ -88,7 +88,7 @@ async function handleAggregate(request, env, url, origin) {
 
   const rowsRes = await env.DB.prepare(
     `SELECT id, corp, region, office, submitted_by as submittedBy, submitted_at as submittedAt,
-            date, currency, amount, cny_amount as cnyAmount, vendor, headcount, note
+            date, currency, amount, cny_amount as cnyAmount, vendor, headcount, note, pre_approved as preApproved
      FROM entries WHERE yearmonth = ? ORDER BY corp, region, submitted_by, date`
   ).bind(yearmonth).all();
 

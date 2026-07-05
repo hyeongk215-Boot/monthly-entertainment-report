@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS entries (
   cny_amount REAL,
   vendor TEXT,
   headcount INTEGER,
-  note TEXT
+  note TEXT,
+  pre_approved INTEGER DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_entries_ym ON entries(yearmonth);

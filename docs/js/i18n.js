@@ -25,6 +25,7 @@ window.I18N = {
     colHeadcount: "인원수",
     colNote: "비고",
     colTier: "결재구분",
+    colPreApproval: "사전승인여부",
     colProposal: "품의서",
     addRow: "+ 행 추가",
     removeRow: "삭제",
@@ -44,6 +45,7 @@ window.I18N = {
     exportSuccess: "엑셀 파일이 다운로드되었습니다. 이 파일을 중국 본사 담당자에게 메일 등으로 전달해주세요.",
     validationEmptyRows: "최소 1건 이상의 접대비 내역을 입력해주세요.",
     validationIncompleteRow: "{n}번째 행의 필수 항목(일시, 금액)을 입력해주세요.",
+    validationPreApproval: "{n}번째 행은 사전승인(사무소장 또는 법인장) 확인 체크가 필요합니다.",
     tierNone: "한도 미만(참고)",
     tierGeneral: "일반 접대 (사무소장 승인)",
     tierImportant: "중요 접대 (중국 법인장 승인)",
@@ -82,7 +84,12 @@ window.I18N = {
     adminDeleteSuccess: "삭제되었습니다.",
     adminDeleteFail: "삭제에 실패했습니다.",
     adminFilterHint: "법인을 클릭하면 해당 법인만 필터링됩니다 (다시 클릭하면 해제).",
-    adminFilterAll: "전체 법인 보기"
+    adminFilterAll: "전체 법인 보기",
+    adminPreApprovalCol: "사전승인",
+    preApprovalChecked: "확인됨",
+    preApprovalUnchecked: "미확인",
+    preApprovalNA: "-",
+    officeRequiredForOther: "지역을 '기타'로 선택하셨습니다. 사무소/지점명을 반드시 입력해주세요."
   },
   zh: {
     appTitle: "中国分公司招待费汇总系统",
@@ -110,6 +117,7 @@ window.I18N = {
     colHeadcount: "人数",
     colNote: "备注",
     colTier: "审批级别",
+    colPreApproval: "事前批准确认",
     colProposal: "申请单",
     addRow: "+ 添加一行",
     removeRow: "删除",
@@ -129,6 +137,7 @@ window.I18N = {
     exportSuccess: "Excel文件已下载。请将该文件通过邮件等方式发送给中国总部负责人。",
     validationEmptyRows: "请至少填写1条招待费明细。",
     validationIncompleteRow: "请完整填写第{n}行的必填项（日期、金额）。",
+    validationPreApproval: "第{n}行需要勾选事前批准确认（办事处主任或法人代表）。",
     tierNone: "低于起报标准(仅供参考)",
     tierGeneral: "一般招待（办事处主任审批）",
     tierImportant: "重要招待（中国法人代表审批）",
@@ -167,7 +176,12 @@ window.I18N = {
     adminDeleteSuccess: "已删除。",
     adminDeleteFail: "删除失败。",
     adminFilterHint: "点击法人可只筛选该法人（再次点击取消筛选）。",
-    adminFilterAll: "查看全部法人"
+    adminFilterAll: "查看全部法人",
+    adminPreApprovalCol: "事前批准",
+    preApprovalChecked: "已确认",
+    preApprovalUnchecked: "未确认",
+    preApprovalNA: "-",
+    officeRequiredForOther: "您选择了地区“其他”，请务必填写办事处/分公司名称。"
   },
   en: {
     appTitle: "China Branch Entertainment Expense Collection System",
@@ -195,6 +209,7 @@ window.I18N = {
     colHeadcount: "Headcount",
     colNote: "Note",
     colTier: "Approval Tier",
+    colPreApproval: "Pre-Approval Check",
     colProposal: "Proposal",
     addRow: "+ Add Row",
     removeRow: "Remove",
@@ -214,6 +229,7 @@ window.I18N = {
     exportSuccess: "Excel file downloaded. Please email this file to the China HQ contact.",
     validationEmptyRows: "Please enter at least one expense entry.",
     validationIncompleteRow: "Please complete required fields (date, amount) on row {n}.",
+    validationPreApproval: "Row {n} requires the pre-approval check (Office Head or Corp GM) to be confirmed.",
     tierNone: "Below threshold (reference only)",
     tierGeneral: "General entertainment (Office Head approval)",
     tierImportant: "Important entertainment (China GM approval)",
@@ -252,7 +268,12 @@ window.I18N = {
     adminDeleteSuccess: "Deleted.",
     adminDeleteFail: "Failed to delete.",
     adminFilterHint: "Click a company to filter to it only (click again to clear).",
-    adminFilterAll: "Show all companies"
+    adminFilterAll: "Show all companies",
+    adminPreApprovalCol: "Pre-Approval",
+    preApprovalChecked: "Confirmed",
+    preApprovalUnchecked: "Not confirmed",
+    preApprovalNA: "-",
+    officeRequiredForOther: "You selected \"Other\" for region. Please enter the office/branch name."
   }
 };
 

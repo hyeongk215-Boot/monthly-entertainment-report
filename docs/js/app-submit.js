@@ -7,7 +7,13 @@
   var pendingSubmitAction = null; // "server" | "export"
 
   function emptyRow() {
-    return { date: "", currency: "CNY", amount: "", cnyAmount: "", vendor: "", headcount: "", note: "" };
+    return { date: "", currency: "CNY", amount: "", cnyAmount: "", vendor: "", headcount: "", note: "", preApproved: false };
+  }
+
+  // 사전승인 체크가 필요한 결재구분: 사무소장 승인(일반), 법인장 승인(중요)
+  // 한도 미만 건과 본사 임원 확인(특별) 건은 체크 불필요
+  function requiresPreApproval(tierKey) {
+    return tierKey === "tierGeneral" || tierKey === "tierImportant";
   }
 
   function renderContextBar() {
@@ -33,6 +39,7 @@
       totalCny += cny;
       var tierKey = window.classifyTier(cny);
       var needsProp = window.needsProposal(cny);
+      var needsPreApproval = requiresPreApproval(tierKey);
       var tr = document.createElement("tr");
       tr.innerHTML =
         "<td>" + (i + 1) + "</td>" +
@@ -48,6 +55,7 @@
         "<td><input type='number' min='0' step='1' data-field='headcount' data-i='" + i + "' value='" + (r.headcount || "") + "'></td>" +
         "<td><input type='text' data-field='note' data-i='" + i + "' value='" + (r.note || "").replace(/'/g, "&#39;") + "'></td>" +
         "<td><span class='badge " + tierBadgeClass(tierKey) + "'>" + t(tierKey) + "</span></td>" +
+        "<td>" + (needsPreApproval ? "<input type='checkbox' data-field='preApproved' data-i='" + i + "'" + (r.preApproved ? " checked" : "") + ">" : "<span style='color:var(--muted);font-size:12px;'>-</span>") + "</td>" +
         "<td>" + (needsProp ? "<button class='btn-secondary proposal-btn' data-i='" + i + "' style='font-size:11px;padding:5px 8px;'>" + t("proposalCopy") + "</button>" : "<span style='color:var(--muted);font-size:12px;'>" + t("proposalNotNeeded") + "</span>") + "</td>" +
         "<td><button class='btn-danger remove-row-btn' data-i='" + i + "' style='font-size:11px;padding:5px 8px;'>" + t("removeRow") + "</button></td>";
       body.appendChild(tr);
@@ -86,6 +94,7 @@
     var cny = Number(r.cnyAmount) || 0;
     var tierKey = window.classifyTier(cny);
     var needsProp = window.needsProposal(cny);
+    var needsPreApproval = requiresPreApproval(tierKey);
     var cells = tr.children;
 
     var cnyInput = cells[4].querySelector("input");
@@ -95,10 +104,17 @@
     badge.className = "badge " + tierBadgeClass(tierKey);
     badge.textContent = t(tierKey);
 
-    cells[9].innerHTML = needsProp
+    cells[9].innerHTML = needsPreApproval
+      ? "<input type='checkbox' data-field='preApproved' data-i='" + i + "'" + (r.preApproved ? " checked" : "") + ">"
+      : "<span style='color:var(--muted);font-size:12px;'>-</span>";
+    if (!needsPreApproval) r.preApproved = false;
+    var cb = cells[9].querySelector("input[type=checkbox]");
+    if (cb) cb.addEventListener("input", onFieldChange);
+
+    cells[10].innerHTML = needsProp
       ? "<button class='btn-secondary proposal-btn' data-i='" + i + "' style='font-size:11px;padding:5px 8px;'>" + t("proposalCopy") + "</button>"
       : "<span style='color:var(--muted);font-size:12px;'>" + t("proposalNotNeeded") + "</span>";
-    var btn = cells[9].querySelector(".proposal-btn");
+    var btn = cells[10].querySelector(".proposal-btn");
     if (btn) bindProposalBtn(btn);
 
     var totalCny = rows.reduce(function (s, row) { return s + (Number(row.cnyAmount) || 0); }, 0);
@@ -108,7 +124,7 @@
   function onFieldChange(e) {
     var i = Number(e.target.dataset.i);
     var field = e.target.dataset.field;
-    rows[i][field] = e.target.value;
+    rows[i][field] = e.target.type === "checkbox" ? e.target.checked : e.target.value;
     if (field === "currency" && e.target.value === "CNY") {
       rows[i].cnyAmount = rows[i].amount;
     }
@@ -144,6 +160,11 @@
       var r = rows[i];
       if (!r.date || !r.amount) {
         showToast(t("validationIncompleteRow", { n: i + 1 }));
+        return false;
+      }
+      var tierKey = window.classifyTier(Number(r.cnyAmount) || 0);
+      if (requiresPreApproval(tierKey) && !r.preApproved) {
+        showToast(t("validationPreApproval", { n: i + 1 }));
         return false;
       }
     }

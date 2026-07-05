@@ -115,6 +115,10 @@ document.addEventListener("DOMContentLoaded", function () {
       showToast(t("requiredWarning"));
       return;
     }
+    if (region === "기타" && !office) {
+      showToast(t("officeRequiredForOther"));
+      return;
+    }
     window.saveContext({ corp: corp, region: region, yearmonth: yearmonth, submitter: submitter, office: office });
     window.location.href = "submit.html";
   });

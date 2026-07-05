@@ -30,8 +30,8 @@
       count++;
       total += Number(r.cnyAmount) || 0;
       var tr = document.createElement("tr");
-      tr.innerHTML = "<td>" + count + "</td><td>" + r.corp + "</td><td>" + r.region + "</td><td>" +
-        (r.office || "") + "</td><td>" + (r.submitter || "") + "</td><td>" + r.date + "</td><td>" +
+      tr.innerHTML = "<td>" + count + "</td><td>" + r.corp + "</td><td>" + window.regionDisplay(r.region, r.office) + "</td><td>" +
+        (r.submitter || "") + "</td><td>" + r.date + "</td><td>" +
         r.currency + "</td><td>" + r.amount + "</td><td>" + r.cnyAmount + "</td><td>" + r.vendor +
         "</td><td>" + r.headcount + "</td><td>" + (r.note || "") + "</td><td style='font-size:11px;color:var(--muted);'>" + (r.sourceFile || "") + "</td>";
       body.appendChild(tr);
@@ -53,17 +53,17 @@
     var ymFilter = document.getElementById("ymFilter").value;
     var filtered = window.sortExpenseRows(allRows.filter(function (r) { return !ymFilter || r.yearmonth === ymFilter; }));
     if (!filtered.length) { showToast(t("mergeNoFiles")); return; }
-    var header = ["번호", "법인", "지역", "사무소/지점", "사용자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "원본파일"];
+    var header = ["번호", "법인", "지역", "사용자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "원본파일"];
     var aoa = [header];
     var total = 0;
     filtered.forEach(function (r, i) {
       total += Number(r.cnyAmount) || 0;
-      aoa.push([i + 1, r.corp, r.region, r.office || "", r.submitter || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor, r.headcount, r.note || "", r.sourceFile || ""]);
+      aoa.push([i + 1, r.corp, window.regionDisplay(r.region, r.office), r.submitter || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor, r.headcount, r.note || "", r.sourceFile || ""]);
     });
     aoa.push([]);
-    aoa.push(["", "", "", "", "", "", "", "", "총액(CNY)", total]);
+    aoa.push(["", "", "", "", "", "", "", "총액(CNY)", total]);
     var ws = XLSX.utils.aoa_to_sheet(aoa);
-    ws["!cols"] = [{ wch: 5 }, { wch: 14 }, { wch: 8 }, { wch: 14 }, { wch: 10 }, { wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 }, { wch: 20 }, { wch: 24 }];
+    ws["!cols"] = [{ wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 }, { wch: 20 }, { wch: 24 }];
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "취합본");
     XLSX.writeFile(wb, t("fileNamePrefix") + "_취합_" + (ymFilter || "all") + ".xlsx");
