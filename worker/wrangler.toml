@@ -9,4 +9,4 @@ compatibility_date = "2024-11-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "china-expense-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "bf861318-f349-43c5-a2eb-2a722a7395b0"

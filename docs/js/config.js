@@ -2,7 +2,7 @@
 window.APP_CONFIG = {
   // Cloudflare Worker 배포 후 이 URL을 채우면 "① 서버로 제출" 기능이 활성화됩니다.
   // 예: "https://china-expense-worker.<your-subdomain>.workers.dev"
-  WORKER_URL: "",
+  WORKER_URL: "https://china-expense-worker.hyeongk215.workers.dev",
 
   // 지점 담당자가 서버 제출 시 입력하는 간단한 공용 비밀번호(스팸 방지용, 필수 아님)
   SUBMIT_KEY: "",
