@@ -1,0 +1,12 @@
+name = "china-expense-worker"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# GitHub Pages 사이트 주소로 제한하려면 아래 값을 실제 주소로 바꾸세요.
+# 예: "https://<your-github-username>.github.io"
+# 여러 개 허용하려면 코드(src/index.js)의 ALLOWED_ORIGINS 배열을 수정하세요.
+
+[[d1_databases]]
+binding = "DB"
+database_name = "china-expense-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"

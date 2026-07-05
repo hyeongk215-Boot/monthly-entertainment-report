@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중국 지점 접대비 취합 시스템</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1 data-i18n="appTitle">중국 지점 접대비 취합 시스템</h1>
+  <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
+    <nav class="nav-links">
+      <a href="merge.html" data-i18n="navMerge">본사용: 파일 병합</a>
+      <a href="admin.html" data-i18n="navAdmin">본사용: 서버 집계</a>
+    </nav>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="ko">한국어</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="en">English</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="card">
+    <h2 data-i18n="indexHeading">월별 접대비 제출</h2>
+    <p class="desc" data-i18n="indexDesc"></p>
+    <div class="form-grid">
+      <div>
+        <label data-i18n="corp">법인</label>
+        <select id="corp"></select>
+      </div>
+      <div>
+        <label data-i18n="region">지역</label>
+        <select id="region"></select>
+      </div>
+      <div>
+        <label data-i18n="yearmonth">적용년도월</label>
+        <select id="yearmonth"></select>
+      </div>
+      <div>
+        <label data-i18n="submitterName">작성자(담당자) 이름</label>
+        <input type="text" id="submitter">
+      </div>
+      <div>
+        <label data-i18n="officeName">사무소/지점명 (선택)</label>
+        <input type="text" id="office">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="startBtn" data-i18n="startBtn">입력 시작</button>
+    </div>
+  </div>
+  <div class="note-box" data-i18n="ruleNote"></div>
+</main>
+<footer>China Entertainment Expense Collection · YJC / HEUNG-A</footer>
+<div class="toast" id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script>
+function fillSelect(sel, list, placeholderKey) {
+  sel.innerHTML = "";
+  var ph = document.createElement("option");
+  ph.value = ""; ph.textContent = t(placeholderKey);
+  sel.appendChild(ph);
+  list.forEach(function (v) {
+    var o = document.createElement("option");
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+function showToast(msg) {
+  var el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(function () { el.classList.remove("show"); }, 2500);
+}
+function init() {
+  fillSelect(document.getElementById("corp"), window.APP_CONFIG.CORPORATIONS, "selectPlaceholder");
+  fillSelect(document.getElementById("region"), window.APP_CONFIG.REGIONS, "selectPlaceholder");
+  var ymSel = document.getElementById("yearmonth");
+  fillSelect(ymSel, window.generateYearMonths(), "selectPlaceholder");
+  ymSel.value = window.defaultYearMonth();
+}
+document.addEventListener("DOMContentLoaded", function () {
+  init();
+  document.addEventListener("langchange", init);
+  document.getElementById("startBtn").addEventListener("click", function () {
+    var corp = document.getElementById("corp").value;
+    var region = document.getElementById("region").value;
+    var yearmonth = document.getElementById("yearmonth").value;
+    var submitter = document.getElementById("submitter").value.trim();
+    var office = document.getElementById("office").value.trim();
+    if (!corp || !region || !yearmonth || !submitter) {
+      showToast(t("requiredWarning"));
+      return;
+    }
+    window.saveContext({ corp: corp, region: region, yearmonth: yearmonth, submitter: submitter, office: office });
+    window.location.href = "submit.html";
+  });
+});
+</script>
+</body>
+</html>

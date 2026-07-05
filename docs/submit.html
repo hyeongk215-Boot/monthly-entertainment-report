@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중국 지점 접대비 취합 시스템</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1 data-i18n="appTitle">중국 지점 접대비 취합 시스템</h1>
+  <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
+    <nav class="nav-links">
+      <a href="index.html" data-i18n="backBtn">← 뒤로</a>
+    </nav>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="ko">한국어</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="en">English</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="card">
+    <h2 data-i18n="submitHeading">접대비 내역 입력</h2>
+    <div class="context-bar" id="contextBar"></div>
+
+    <div class="table-wrap">
+      <table class="exp-table" id="expTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th data-i18n="colDate">일시</th>
+            <th data-i18n="colCurrency">단위</th>
+            <th data-i18n="colAmount">금액</th>
+            <th data-i18n="colCnyAmount">CNY 환산액</th>
+            <th data-i18n="colVendor">접대처</th>
+            <th data-i18n="colHeadcount">인원수</th>
+            <th data-i18n="colNote">비고</th>
+            <th data-i18n="colTier">결재구분</th>
+            <th data-i18n="colProposal">품의서</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="expBody"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="addRowBtn" data-i18n="addRow">+ 행 추가</button>
+    </div>
+
+    <div class="summary-bar">
+      <div><span data-i18n="totalRows">총 건수</span>: <b id="totalRows">0</b></div>
+      <div><span data-i18n="totalCny">총액(CNY 환산)</span>: <b id="totalCny">0</b></div>
+      <div id="draftSavedAtWrap" style="color:var(--muted); display:none;">
+        <span data-i18n="draftSavedAt">마지막 임시저장</span>: <span id="draftSavedAt"></span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="draftSaveBtn" data-i18n="draftSaveBtn">임시저장</button>
+      <button class="btn-secondary" id="exportBtn" data-i18n="exportBtn">③ 엑셀 파일로 내보내기</button>
+      <button class="btn-primary" id="serverSubmitBtn" data-i18n="serverSubmitBtn">① 서버로 최종 제출</button>
+    </div>
+    <div class="note-box" data-i18n="ruleNote"></div>
+  </div>
+</main>
+<footer>China Entertainment Expense Collection · YJC / HEUNG-A</footer>
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 data-i18n="finalConfirmTitle">최종 제출 확인</h3>
+    <pre id="confirmBody"></pre>
+    <div class="btn-row">
+      <button class="btn-secondary" id="confirmNo" data-i18n="confirmNo">취소</button>
+      <button class="btn-primary" id="confirmYes" data-i18n="confirmYes">확인, 제출합니다</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="js/app-submit.js"></script>
+</body>
+</html>
