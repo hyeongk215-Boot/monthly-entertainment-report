@@ -39,7 +39,11 @@
     </div>
 
     <h3 data-i18n="adminStatusHeading" style="font-size:15px; margin-top:22px;"></h3>
+    <p class="desc" data-i18n="adminFilterHint" style="margin-bottom:6px;"></p>
     <div class="status-grid" id="statusGrid"></div>
+    <div class="btn-row" id="filterAllWrap" style="display:none;">
+      <button class="btn-secondary" id="filterAllBtn" data-i18n="adminFilterAll"></button>
+    </div>
 
     <div class="summary-bar">
       <div><span data-i18n="totalRows">총 건수</span>: <b id="totalRows">0</b></div>
@@ -62,6 +66,7 @@
             <th data-i18n="colHeadcount"></th>
             <th data-i18n="colNote"></th>
             <th data-i18n="submittedAtCol"></th>
+            <th data-i18n="colDelete"></th>
           </tr>
         </thead>
         <tbody id="previewBody"></tbody>

@@ -7,7 +7,7 @@ function corsHeaders(origin) {
   var allow = ALLOWED_ORIGINS.includes("*") ? "*" : (ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]);
   return {
     "Access-Control-Allow-Origin": allow,
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Admin-Key",
     "Content-Type": "application/json; charset=utf-8"
   };
@@ -33,6 +33,9 @@ export default {
       if (url.pathname === "/api/aggregate" && request.method === "GET") {
         return await handleAggregate(request, env, url, origin);
       }
+      if (url.pathname === "/api/entry" && request.method === "DELETE") {
+        return await handleDeleteEntry(request, env, url, origin);
+      }
       return json({ error: "not_found" }, 404, origin);
     } catch (err) {
       return json({ error: "server_error", message: String(err) }, 500, origin);
@@ -53,10 +56,11 @@ async function handleSubmit(request, env, origin) {
 
   const now = new Date().toISOString();
 
-  // 같은 법인/지역/적용년도월로 재제출하면 기존 내역을 덮어씀 (중복/누적 방지)
+  // 같은 법인/지역/적용년도월/사용자로 재제출하면 "그 사용자"의 기존 내역만 덮어씀
+  // (한 PC에서 여러 사용자 몫을 대리 작성할 수 있으므로, 사용자가 다르면 서로 덮어쓰지 않습니다)
   await env.DB.prepare(
-    "DELETE FROM entries WHERE corp = ? AND region = ? AND yearmonth = ?"
-  ).bind(corp, region, yearmonth).run();
+    "DELETE FROM entries WHERE corp = ? AND region = ? AND yearmonth = ? AND submitted_by = ?"
+  ).bind(corp, region, yearmonth, submittedBy).run();
 
   const stmt = env.DB.prepare(
     `INSERT INTO entries (corp, region, yearmonth, office, submitted_by, submitted_at, date, currency, amount, cny_amount, vendor, headcount, note)
@@ -83,9 +87,9 @@ async function handleAggregate(request, env, url, origin) {
   if (!yearmonth) return json({ error: "yearmonth_required" }, 400, origin);
 
   const rowsRes = await env.DB.prepare(
-    `SELECT corp, region, office, submitted_by as submittedBy, submitted_at as submittedAt,
+    `SELECT id, corp, region, office, submitted_by as submittedBy, submitted_at as submittedAt,
             date, currency, amount, cny_amount as cnyAmount, vendor, headcount, note
-     FROM entries WHERE yearmonth = ? ORDER BY corp, region, date`
+     FROM entries WHERE yearmonth = ? ORDER BY corp, region, submitted_by, date`
   ).bind(yearmonth).all();
 
   const subRes = await env.DB.prepare(
@@ -94,4 +98,16 @@ async function handleAggregate(request, env, url, origin) {
   ).bind(yearmonth).all();
 
   return json({ rows: rowsRes.results || [], submissions: subRes.results || [] }, 200, origin);
+}
+
+async function handleDeleteEntry(request, env, url, origin) {
+  const adminKey = request.headers.get("X-Admin-Key") || "";
+  if (!env.ADMIN_KEY || adminKey !== env.ADMIN_KEY) {
+    return json({ error: "unauthorized" }, 401, origin);
+  }
+  const id = url.searchParams.get("id");
+  if (!id) return json({ error: "id_required" }, 400, origin);
+
+  await env.DB.prepare("DELETE FROM entries WHERE id = ?").bind(id).run();
+  return json({ ok: true }, 200, origin);
 }

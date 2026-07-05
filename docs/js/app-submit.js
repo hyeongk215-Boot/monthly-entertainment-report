@@ -2,7 +2,7 @@
   var ctx = window.loadContext();
   if (!ctx) { window.location.href = "index.html"; return; }
 
-  var dKey = window.draftKey(ctx.corp, ctx.region, ctx.yearmonth);
+  var dKey = window.draftKey(ctx.corp, ctx.region, ctx.yearmonth, ctx.submitter);
   var rows = [];
   var pendingSubmitAction = null; // "server" | "export"
 
@@ -65,13 +65,44 @@
         autosave();
       });
     });
-    body.querySelectorAll(".proposal-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var r = rows[Number(btn.dataset.i)];
-        var text = t("proposalTemplate", { vendor: r.vendor || "-", date: r.date || "-", amount: r.cnyAmount || r.amount || "-", headcount: r.headcount || "-" });
-        navigator.clipboard.writeText(text).then(function () { showToast(t("proposalCopied")); });
-      });
+    body.querySelectorAll(".proposal-btn").forEach(bindProposalBtn);
+  }
+
+  function bindProposalBtn(btn) {
+    btn.addEventListener("click", function () {
+      var r = rows[Number(btn.dataset.i)];
+      var text = t("proposalTemplate", { vendor: r.vendor || "-", date: r.date || "-", amount: r.cnyAmount || r.amount || "-", headcount: r.headcount || "-" });
+      navigator.clipboard.writeText(text).then(function () { showToast(t("proposalCopied")); });
     });
+  }
+
+  // 금액/통화가 바뀌어도 표 전체를 다시 그리지 않고, 해당 행의 배지/품의서 칸만 갱신합니다.
+  // (표 전체를 다시 그리면 입력 중이던 input이 새로 생성되면서 커서가 맨 앞으로 이동해
+  //  "1000" 입력 시 "0001"처럼 뒤집혀 보이는 문제가 있었습니다.)
+  function updateRowComputed(i) {
+    var tr = document.getElementById("expBody").children[i];
+    if (!tr) return;
+    var r = rows[i];
+    var cny = Number(r.cnyAmount) || 0;
+    var tierKey = window.classifyTier(cny);
+    var needsProp = window.needsProposal(cny);
+    var cells = tr.children;
+
+    var cnyInput = cells[4].querySelector("input");
+    if (cnyInput && document.activeElement !== cnyInput) cnyInput.value = r.cnyAmount;
+
+    var badge = cells[8].querySelector(".badge");
+    badge.className = "badge " + tierBadgeClass(tierKey);
+    badge.textContent = t(tierKey);
+
+    cells[9].innerHTML = needsProp
+      ? "<button class='btn-secondary proposal-btn' data-i='" + i + "' style='font-size:11px;padding:5px 8px;'>" + t("proposalCopy") + "</button>"
+      : "<span style='color:var(--muted);font-size:12px;'>" + t("proposalNotNeeded") + "</span>";
+    var btn = cells[9].querySelector(".proposal-btn");
+    if (btn) bindProposalBtn(btn);
+
+    var totalCny = rows.reduce(function (s, row) { return s + (Number(row.cnyAmount) || 0); }, 0);
+    document.getElementById("totalCny").textContent = totalCny.toLocaleString(undefined, { maximumFractionDigits: 2 });
   }
 
   function onFieldChange(e) {
@@ -84,11 +115,8 @@
     if (field === "amount" && rows[i].currency === "CNY") {
       rows[i].cnyAmount = e.target.value;
     }
-    // 결재구분/품의서 배지만 다시 그리되 입력 포커스를 잃지 않도록 필요한 셀만 갱신
     if (field === "amount" || field === "cnyAmount" || field === "currency") {
-      renderRows();
-      var target = document.querySelector("[data-field='" + field + "'][data-i='" + i + "']");
-      if (target) target.focus();
+      updateRowComputed(i);
     }
     autosave();
   }
@@ -114,7 +142,7 @@
     if (rows.length === 0) { showToast(t("validationEmptyRows")); return false; }
     for (var i = 0; i < rows.length; i++) {
       var r = rows[i];
-      if (!r.date || !r.amount || !r.vendor || !r.headcount) {
+      if (!r.date || !r.amount) {
         showToast(t("validationIncompleteRow", { n: i + 1 }));
         return false;
       }

@@ -52,8 +52,9 @@ window.regionLabel = function (koValue, lang) {
 };
 
 // ===== localStorage 임시저장 =====
-window.draftKey = function (corp, region, yearmonth) {
-  return "draft::" + corp + "::" + region + "::" + yearmonth;
+// 같은 PC에서 여러 사용자(대리 작성 포함) 내역을 입력할 수 있으므로 사용자명까지 키에 포함합니다.
+window.draftKey = function (corp, region, yearmonth, submitter) {
+  return "draft::" + corp + "::" + region + "::" + yearmonth + "::" + (submitter || "");
 };
 window.saveDraft = function (key, data) {
   data._savedAt = new Date().toISOString();
@@ -81,7 +82,7 @@ window.loadContext = function () {
 // rows: [{date, currency, amount, cnyAmount, vendor, headcount, note}]
 window.buildWorkbook = function (context, rows) {
   var header = [
-    "번호", "법인", "지역", "적용년도월", "작성자", "사무소/지점", "일시",
+    "번호", "법인", "지역", "적용년도월", "사용자", "사무소/지점", "일시",
     "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "결재구분"
   ];
   var aoa = [header];
@@ -115,6 +116,21 @@ window.exportContextRows = function (context, rows, i18nPrefixKey) {
   var wb = window.buildWorkbook(context, rows);
   var fname = t(i18nPrefixKey || "fileNamePrefix") + "_" + context.corp + "_" + context.region + "_" + context.yearmonth + ".xlsx";
   window.downloadWorkbook(wb, fname);
+};
+
+// 법인 -> 지역 -> 사용자(작성자) -> 일시 순으로 정렬 (법인 필터 시에도 동일 기준 유지)
+window.sortExpenseRows = function (rows) {
+  return rows.slice().sort(function (a, b) {
+    var ac = (a.corp || ""), bc = (b.corp || "");
+    if (ac !== bc) return ac < bc ? -1 : 1;
+    var ar = (a.region || ""), br = (b.region || "");
+    if (ar !== br) return ar < br ? -1 : 1;
+    var au = (a.submitter || a.submittedBy || ""), bu = (b.submitter || b.submittedBy || "");
+    if (au !== bu) return au < bu ? -1 : 1;
+    var ad = (a.date || ""), bd = (b.date || "");
+    if (ad !== bd) return ad < bd ? -1 : 1;
+    return 0;
+  });
 };
 
 // 업로드된 지점 엑셀 파일(위 buildWorkbook 형식)을 파싱해서 rows 배열로 복원

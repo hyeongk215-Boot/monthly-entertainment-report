@@ -24,7 +24,8 @@
     var body = document.getElementById("previewBody");
     body.innerHTML = "";
     var total = 0, count = 0;
-    allRows.forEach(function (r, i) {
+    var sorted = window.sortExpenseRows(allRows);
+    sorted.forEach(function (r, i) {
       if (ymFilter && r.yearmonth !== ymFilter) return;
       count++;
       total += Number(r.cnyAmount) || 0;
@@ -50,9 +51,9 @@
 
   function downloadMerged() {
     var ymFilter = document.getElementById("ymFilter").value;
-    var filtered = allRows.filter(function (r) { return !ymFilter || r.yearmonth === ymFilter; });
+    var filtered = window.sortExpenseRows(allRows.filter(function (r) { return !ymFilter || r.yearmonth === ymFilter; }));
     if (!filtered.length) { showToast(t("mergeNoFiles")); return; }
-    var header = ["번호", "법인", "지역", "사무소/지점", "작성자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "원본파일"];
+    var header = ["번호", "법인", "지역", "사무소/지점", "사용자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "원본파일"];
     var aoa = [header];
     var total = 0;
     filtered.forEach(function (r, i) {
