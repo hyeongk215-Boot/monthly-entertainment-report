@@ -1,6 +1,6 @@
 window.I18N = {
   ko: {
-    appTitle: "중국 지점 접대비 취합 시스템",
+    appTitle: "중국법인 접대비 취합 시스템",
     langName: "한국어",
     navIndex: "제출 시작",
     navMerge: "본사용: 파일 병합",
@@ -92,7 +92,7 @@ window.I18N = {
     officeRequiredForOther: "지역을 '기타'로 선택하셨습니다. 사무소/지점명을 반드시 입력해주세요."
   },
   zh: {
-    appTitle: "中国分公司招待费汇总系统",
+    appTitle: "中国法人招待费汇总系统",
     langName: "中文",
     navIndex: "开始填报",
     navMerge: "总部用：文件合并",
@@ -184,7 +184,7 @@ window.I18N = {
     officeRequiredForOther: "您选择了地区“其他”，请务必填写办事处/分公司名称。"
   },
   en: {
-    appTitle: "China Branch Entertainment Expense Collection System",
+    appTitle: "Chinese Corporation Entertainment Expense Collection System",
     langName: "English",
     navIndex: "Start Submission",
     navMerge: "HQ: Merge Files",
