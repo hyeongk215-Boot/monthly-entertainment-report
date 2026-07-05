@@ -24,12 +24,12 @@
     grid.innerHTML = "";
     var submittedCorps = {};
     (submittedList || []).forEach(function (s) { submittedCorps[s.corp] = s; });
-    window.APP_CONFIG.CORPORATIONS.forEach(function (corp) {
-      if (corp === "기타") return;
-      var s = submittedCorps[corp];
+    window.APP_CONFIG.CORPORATIONS.forEach(function (corpItem) {
+      if (corpItem.ko === "기타") return;
+      var s = submittedCorps[corpItem.ko];
       var div = document.createElement("div");
       div.className = "status-chip " + (s ? "ok" : "missing");
-      div.innerHTML = "<b>" + corp + "</b><br>" + (s ? t("adminSubmitted") + " (" + (s.submittedBy || "") + ")" : t("adminNotSubmitted"));
+      div.innerHTML = "<b>" + window.corpLabel(corpItem.ko) + "</b><br>" + (s ? t("adminSubmitted") + " (" + (s.submittedBy || "") + ")" : t("adminNotSubmitted"));
       grid.appendChild(div);
     });
   }

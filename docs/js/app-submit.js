@@ -13,8 +13,8 @@
   function renderContextBar() {
     var bar = document.getElementById("contextBar");
     bar.innerHTML =
-      "<div>" + t("corp") + ": <b>" + ctx.corp + "</b></div>" +
-      "<div>" + t("region") + ": <b>" + ctx.region + "</b></div>" +
+      "<div>" + t("corp") + ": <b>" + window.corpLabel(ctx.corp) + "</b></div>" +
+      "<div>" + t("region") + ": <b>" + window.regionLabel(ctx.region) + "</b></div>" +
       "<div>" + t("yearmonth") + ": <b>" + ctx.yearmonth + "</b></div>" +
       "<div>" + t("submitterName") + ": <b>" + ctx.submitter + "</b></div>" +
       (ctx.office ? "<div>" + t("officeName") + ": <b>" + ctx.office + "</b></div>" : "");
@@ -130,7 +130,7 @@
     if (!validate()) return;
     pendingSubmitAction = action;
     document.getElementById("confirmBody").textContent = t("finalConfirmBody", {
-      corp: ctx.corp, region: ctx.region, yearmonth: ctx.yearmonth, submitter: ctx.submitter,
+      corp: window.corpLabel(ctx.corp), region: window.regionLabel(ctx.region), yearmonth: ctx.yearmonth, submitter: ctx.submitter,
       rows: rows.length, total: totalCnyValue().toLocaleString()
     });
     document.getElementById("confirmModal").classList.add("show");

@@ -33,6 +33,24 @@ window.needsProposal = function (cnyAmount) {
   return cnyAmount > window.APP_CONFIG.PROPOSAL_THRESHOLD_CNY;
 };
 
+// 법인/지역은 한국어(ko) 값을 저장/보고 기준으로 쓰고, 화면 표시만 언어별로 바꿉니다.
+function findByKo(list, koValue) {
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].ko === koValue) return list[i];
+  }
+  return null;
+}
+window.corpLabel = function (koValue, lang) {
+  var item = findByKo(window.APP_CONFIG.CORPORATIONS, koValue);
+  if (!item) return koValue;
+  return item[lang || getLang()] || item.ko;
+};
+window.regionLabel = function (koValue, lang) {
+  var item = findByKo(window.APP_CONFIG.REGIONS, koValue);
+  if (!item) return koValue;
+  return item[lang || getLang()] || item.ko;
+};
+
 // ===== localStorage 임시저장 =====
 window.draftKey = function (corp, region, yearmonth) {
   return "draft::" + corp + "::" + region + "::" + yearmonth;

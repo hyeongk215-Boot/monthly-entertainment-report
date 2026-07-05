@@ -61,6 +61,7 @@
 <script src="js/common.js"></script>
 <script>
 function fillSelect(sel, list, placeholderKey) {
+  var prev = sel.value;
   sel.innerHTML = "";
   var ph = document.createElement("option");
   ph.value = ""; ph.textContent = t(placeholderKey);
@@ -70,6 +71,22 @@ function fillSelect(sel, list, placeholderKey) {
     o.value = v; o.textContent = v;
     sel.appendChild(o);
   });
+  if (prev) sel.value = prev;
+}
+// 법인/지역: 저장 값은 한국어(ko)로 고정, 화면 텍스트만 언어별로 번역
+function fillLocalizedSelect(sel, list, placeholderKey) {
+  var prev = sel.value;
+  var lang = getLang();
+  sel.innerHTML = "";
+  var ph = document.createElement("option");
+  ph.value = ""; ph.textContent = t(placeholderKey);
+  sel.appendChild(ph);
+  list.forEach(function (item) {
+    var o = document.createElement("option");
+    o.value = item.ko; o.textContent = item[lang] || item.ko;
+    sel.appendChild(o);
+  });
+  if (prev) sel.value = prev;
 }
 function showToast(msg) {
   var el = document.getElementById("toast");
@@ -78,11 +95,12 @@ function showToast(msg) {
   setTimeout(function () { el.classList.remove("show"); }, 2500);
 }
 function init() {
-  fillSelect(document.getElementById("corp"), window.APP_CONFIG.CORPORATIONS, "selectPlaceholder");
-  fillSelect(document.getElementById("region"), window.APP_CONFIG.REGIONS, "selectPlaceholder");
+  fillLocalizedSelect(document.getElementById("corp"), window.APP_CONFIG.CORPORATIONS, "selectPlaceholder");
+  fillLocalizedSelect(document.getElementById("region"), window.APP_CONFIG.REGIONS, "selectPlaceholder");
   var ymSel = document.getElementById("yearmonth");
+  var hadYm = ymSel.value;
   fillSelect(ymSel, window.generateYearMonths(), "selectPlaceholder");
-  ymSel.value = window.defaultYearMonth();
+  ymSel.value = hadYm || window.defaultYearMonth();
 }
 document.addEventListener("DOMContentLoaded", function () {
   init();

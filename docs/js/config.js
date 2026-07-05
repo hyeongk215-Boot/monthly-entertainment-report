@@ -7,11 +7,35 @@ window.APP_CONFIG = {
   // 지점 담당자가 서버 제출 시 입력하는 간단한 공용 비밀번호(스팸 방지용, 필수 아님)
   SUBMIT_KEY: "",
 
-  // 법인 목록 (해외 주재원 월별 접대비 리스트.xlsx 기준)
-  CORPORATIONS: ["YJC 포워딩", "상해물류센터", "흥아물류", "천진 윤봉물류", "청도 CY", "창씽CY", "기타"],
+  // 법인 목록 (ko 값이 저장/보고 기준 값입니다. zh/en은 화면 표시용 번역만 담당)
+  CORPORATIONS: [
+    { ko: "YJC 포워딩", zh: "裕佳昌 货运代理", en: "YJC Forwarding" },
+    { ko: "상해물류센터", zh: "上海 物流中心", en: "YJC CY&WH" },
+    { ko: "흥아물류", zh: "兴亚物流", en: "Heung-A Logistics" },
+    { ko: "윤봉물류", zh: "润峰物流", en: "Runfeng" },
+    { ko: "청도 CY", zh: "青岛 CY", en: "Qingdao CY" },
+    { ko: "창씽 CY", zh: "长兴 CY", en: "CML CX CY" },
+    { ko: "기타", zh: "其他", en: "Other" }
+  ],
 
   // 지역 목록
-  REGIONS: ["상해", "닝보", "남경", "충칭", "천진", "대련", "청도", "위해", "연태", "심천", "광주", "홍콩", "연운항", "하문", "기타"],
+  REGIONS: [
+    { ko: "상해", zh: "上海", en: "Shanghai" },
+    { ko: "닝보", zh: "宁波", en: "Ningbo" },
+    { ko: "남경", zh: "南京", en: "Nanjing" },
+    { ko: "충칭", zh: "重庆", en: "Chongqing" },
+    { ko: "천진", zh: "天津", en: "Tianjin" },
+    { ko: "대련", zh: "大连", en: "Dalian" },
+    { ko: "청도", zh: "青岛", en: "Qingdao" },
+    { ko: "위해", zh: "威海", en: "Weihai" },
+    { ko: "연태", zh: "烟台", en: "Yantai" },
+    { ko: "심천", zh: "深圳", en: "Shenzhen" },
+    { ko: "광주", zh: "广州", en: "Guangzhou" },
+    { ko: "홍콩", zh: "香港", en: "Hongkong" },
+    { ko: "연운항", zh: "连云港", en: "Lianyungang" },
+    { ko: "하문", zh: "厦门", en: "Xiamen" },
+    { ko: "기타", zh: "其他", en: "Other" }
+  ],
 
   // 통화 단위
   CURRENCIES: ["CNY", "KRW", "USD"],
