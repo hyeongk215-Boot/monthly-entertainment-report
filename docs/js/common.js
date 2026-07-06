@@ -1,5 +1,16 @@
 // 공통 유틸 함수 모음
 
+// ===== Supabase 클라이언트 (① 서버 제출/집계용) =====
+// docs/vendor/supabase.js 가 전역 `supabase.createClient`를 제공합니다 (config.js, vendor/supabase.js 로드 후 사용).
+window.getSupabaseClient = function () {
+  var cfg = window.APP_CONFIG;
+  if (!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) return null;
+  if (!window._supabaseClient) {
+    window._supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  }
+  return window._supabaseClient;
+};
+
 // 접대비 관리 규정 시행일(2026-07-01) 이전 월은 선택지에 나오지 않도록 하한선을 고정합니다.
 // 상한선(미래 방향)은 "오늘" 기준으로 매번 새로 계산되므로 별도 수정 없이 매달 자동으로 다음달이 추가됩니다.
 window.MIN_YEARMONTH = "2026-07";

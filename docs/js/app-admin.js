@@ -50,15 +50,11 @@
 
   function deleteEntry(id) {
     if (!confirm(t("adminDeleteConfirm"))) return;
-    var url = window.APP_CONFIG.WORKER_URL;
+    var client = window.getSupabaseClient();
     var key = document.getElementById("adminKey").value;
-    fetch(url.replace(/\/$/, "") + "/api/entry?id=" + encodeURIComponent(id), {
-      method: "DELETE",
-      headers: { "X-Admin-Key": key }
-    }).then(function (res) {
-      if (!res.ok) throw new Error("bad status");
-      return res.json();
-    }).then(function () {
+    if (!client) { showToast(t("adminDeleteFail")); return; }
+    client.rpc("delete_entry", { p_id: id, p_admin_key: key }).then(function (res) {
+      if (res.error) throw res.error;
       showToast(t("adminDeleteSuccess"));
       lastData.rows = lastData.rows.filter(function (r) { return String(r.id) !== String(id); });
       renderAll();
@@ -96,17 +92,13 @@
   }
 
   function fetchData() {
-    var url = window.APP_CONFIG.WORKER_URL;
+    var client = window.getSupabaseClient();
     var key = document.getElementById("adminKey").value;
     var ym = document.getElementById("adminYm").value;
-    if (!url) { showToast(t("adminFetchFail")); return; }
-    fetch(url.replace(/\/$/, "") + "/api/aggregate?yearmonth=" + encodeURIComponent(ym), {
-      headers: { "X-Admin-Key": key }
-    }).then(function (res) {
-      if (!res.ok) throw new Error("bad status");
-      return res.json();
-    }).then(function (data) {
-      lastData = data;
+    if (!client) { showToast(t("adminFetchFail")); return; }
+    client.rpc("get_aggregate", { p_yearmonth: ym, p_admin_key: key }).then(function (res) {
+      if (res.error) throw res.error;
+      lastData = res.data;
       corpFilter = null;
       renderAll();
     }).catch(function () {

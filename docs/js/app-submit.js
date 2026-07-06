@@ -196,21 +196,15 @@
   }
 
   function doServerSubmit() {
-    var url = window.APP_CONFIG.WORKER_URL;
-    if (!url) { showToast(t("submitFail")); return; }
-    fetch(url.replace(/\/$/, "") + "/api/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        corp: ctx.corp, region: ctx.region, yearmonth: ctx.yearmonth,
-        submittedBy: ctx.submitter, office: ctx.office || "",
-        submitKey: window.APP_CONFIG.SUBMIT_KEY || "",
-        rows: rows
-      })
+    var client = window.getSupabaseClient();
+    if (!client) { showToast(t("submitFail")); return; }
+    client.rpc("submit_entries", {
+      p_corp: ctx.corp, p_region: ctx.region, p_yearmonth: ctx.yearmonth,
+      p_office: ctx.office || "", p_submitted_by: ctx.submitter,
+      p_submit_key: window.APP_CONFIG.SUBMIT_KEY || "",
+      p_rows: rows
     }).then(function (res) {
-      if (!res.ok) throw new Error("bad status");
-      return res.json();
-    }).then(function () {
+      if (res.error) throw res.error;
       showToast(t("submitSuccess"));
       window.clearDraft(dKey);
     }).catch(function () {

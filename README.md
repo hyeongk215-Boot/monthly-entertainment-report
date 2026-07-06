@@ -8,12 +8,14 @@
   - `index.html` — 법인/지역/적용년도월/작성자 선택
   - `submit.html` — 접대비 내역 입력, 임시저장(자동저장 포함), 최종 제출
   - `merge.html` — [본사용] 지점들이 내보낸 엑셀 파일 여러 개를 업로드해서 자동 병합 (③ 방식)
-  - `admin.html` — [본사용] Cloudflare Worker에 저장된 데이터를 월별로 조회/다운로드 (① 방식)
-- `worker/` — (선택) ① 서버 제출 방식을 쓸 경우에만 필요한 Cloudflare Worker + D1 백엔드
+  - `admin.html` — [본사용] Supabase에 저장된 데이터를 월별로 조회/다운로드 (① 방식)
+- `supabase/` — (선택) ① 서버 제출 방식을 쓸 경우에만 필요한 Supabase 테이블/함수 정의 (`schema.sql`)
+- `worker/` — (사용 중단) 과거 Cloudflare Worker + D1 백엔드. `*.workers.dev`가 중국에서 간헐적으로
+  차단되는 문제로 Supabase로 교체했습니다. 참고용으로만 남겨두었습니다.
 
 ## 두 가지 제출 방식 (둘 다 만들어져 있으며, 테스트 후 하나를 선택하거나 병행 사용 가능)
-1. **① 서버로 최종 제출**: Cloudflare Worker(무료)에 데이터가 저장되고, 본사는 `admin.html`에서 바로 조회/다운로드합니다.
-   실시간 취합이 가능하지만 `worker/README-deploy.md`대로 별도 배포가 필요합니다.
+1. **① 서버로 최종 제출**: Supabase(무료)에 데이터가 저장되고, 본사는 `admin.html`에서 바로 조회/다운로드합니다.
+   실시간 취합이 가능하지만 `supabase/README-deploy.md`대로 별도 설정이 필요합니다.
 2. **③ 엑셀 파일로 내보내기**: 지점 담당자가 버튼을 누르면 엑셀 파일이 다운로드되고, 이를 메일 등으로 본사에 보내면
    본사가 `merge.html`에서 여러 파일을 업로드해 자동으로 하나의 표로 병합합니다. 서버/배포가 전혀 필요 없습니다.
 
@@ -37,8 +39,8 @@
 4. 1~2분 후 `https://<your-username>.github.io/<repo-name>/` 주소로 접속하면 사이트가 열립니다.
 5. 이 주소를 각 지점(분공사) 담당자에게 공유하면, 중국에서도 GitHub Pages는 접속이 가능하므로 별도 VPN 없이 사용할 수 있습니다.
 
-## ① 서버 제출(Cloudflare Worker) 방식을 쓰려면
-`worker/README-deploy.md` 문서를 따라 배포한 뒤, `docs/js/config.js`의 `WORKER_URL` 값을 채우고 다시 커밋/푸시하세요.
+## ① 서버 제출(Supabase) 방식을 쓰려면
+`supabase/README-deploy.md` 문서를 따라 설정한 뒤, `docs/js/config.js`의 `SUPABASE_URL` / `SUPABASE_ANON_KEY` 값을 채우고 다시 커밋/푸시하세요.
 
 ## 접대비 규정 반영 사항
 `중국 접대비 관리 규정 (최종)`을 반영하여 다음 기능이 포함되어 있습니다.

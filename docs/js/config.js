@@ -1,10 +1,13 @@
 // ===== 이 파일만 수정하면 됩니다 (본사/지점 공통 설정) =====
 window.APP_CONFIG = {
-  // Cloudflare Worker 배포 후 이 URL을 채우면 "① 서버로 제출" 기능이 활성화됩니다.
-  // 예: "https://china-expense-worker.<your-subdomain>.workers.dev"
-  WORKER_URL: "https://china-expense-worker.hyeongk215.workers.dev",
+  // Supabase 프로젝트 생성 후 이 두 값을 채우면 "① 서버로 제출" 기능이 활성화됩니다.
+  // Supabase 대시보드 > Project Settings > API 에서 확인 (Project URL / anon public key)
+  // 자세한 절차는 supabase/README-deploy.md 참고
+  SUPABASE_URL: "https://ipnuhxmvsyuerlvqeyoa.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_juVphLpldO2Ml5JiA3cKaw_nh0YjN2A",
 
   // 지점 담당자가 서버 제출 시 입력하는 간단한 공용 비밀번호(스팸 방지용, 필수 아님)
+  // supabase/schema.sql 의 submit_entries 함수 안 CHANGE_ME_SUBMIT_KEY 와 동일한 값을 넣으세요.
   SUBMIT_KEY: "",
 
   // 법인 목록 (ko 값이 저장/보고 기준 값입니다. zh/en은 화면 표시용 번역만 담당)
