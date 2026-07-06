@@ -57,6 +57,23 @@ window.regionDisplay = function (koValue, office, lang) {
   return window.regionLabel(koValue, lang);
 };
 
+// 지점마다 다른 언어로 내보낸 엑셀 파일을 병합할 때, 법인/지역 값을 언어에 관계없이
+// 하나의 기준(한국어 ko값)으로 되돌려서 병합본을 일관되게 만듭니다.
+// (매칭되는 항목이 없으면 원래 값을 그대로 둡니다 - 예: "기타" 대신 들어간 사무소명)
+function findKoByAnyLabel(list, anyValue) {
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    if (item.ko === anyValue || item.zh === anyValue || item.en === anyValue) return item.ko;
+  }
+  return anyValue;
+}
+window.corpKoFromLabel = function (anyValue) {
+  return findKoByAnyLabel(window.APP_CONFIG.CORPORATIONS, anyValue);
+};
+window.regionKoFromLabel = function (anyValue) {
+  return findKoByAnyLabel(window.APP_CONFIG.REGIONS, anyValue);
+};
+
 // ===== localStorage 임시저장 =====
 // 같은 PC에서 여러 사용자(대리 작성 포함) 내역을 입력할 수 있으므로 사용자명까지 키에 포함합니다.
 window.draftKey = function (corp, region, yearmonth, submitter) {
@@ -84,33 +101,35 @@ window.loadContext = function () {
   return raw ? JSON.parse(raw) : null;
 };
 
-// ===== 엑셀 내보내기 (해외 주재원 월별 접대비 리스트.xlsx 형식과 유사하게) =====
-// rows: [{date, currency, amount, cnyAmount, vendor, headcount, note}]
+// ===== 엑셀 내보내기 =====
+// 취합본(merge/admin)과 동일한 컬럼 구성을 사용합니다: 지역을 "기타"로 선택한 경우
+// 지역 칸에 사무소/지점명을 대신 표시하고, 별도의 사무소/지점 컬럼은 두지 않습니다.
+// 헤더/총액 라벨/결재구분 값은 모두 현재 선택된 언어로 출력됩니다.
 window.buildWorkbook = function (context, rows) {
   var header = [
-    "번호", "법인", "지역", "적용년도월", "사용자", "사무소/지점", "일시",
-    "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "결재구분"
+    t("rowNumberCol"), t("corp"), t("region"), t("yearmonth"), t("submitterCol"), t("colDate"),
+    t("colCurrency"), t("colAmount"), t("colCnyAmount"), t("colVendor"), t("colHeadcount"), t("colNote"), t("colTier")
   ];
   var aoa = [header];
   var totalCny = 0;
   rows.forEach(function (r, i) {
     totalCny += Number(r.cnyAmount) || 0;
     aoa.push([
-      i + 1, context.corp, context.region, context.yearmonth, context.submitter,
-      context.office || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor,
+      i + 1, window.corpLabel(context.corp), window.regionDisplay(context.region, context.office), context.yearmonth, context.submitter,
+      r.date, r.currency, r.amount, r.cnyAmount, r.vendor,
       r.headcount, r.note || "", t(window.classifyTier(Number(r.cnyAmount) || 0))
     ]);
   });
   aoa.push([]);
-  aoa.push(["", "", "", "", "", "", "", "", "", "총액(CNY)", totalCny]);
+  aoa.push(["", "", "", "", "", "", "", "", t("totalCnyLabel"), totalCny]);
   var ws = XLSX.utils.aoa_to_sheet(aoa);
   ws["!cols"] = [
-    { wch: 5 }, { wch: 14 }, { wch: 8 }, { wch: 10 }, { wch: 10 }, { wch: 14 },
+    { wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
     { wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 },
     { wch: 20 }, { wch: 22 }
   ];
   var wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "접대비내역");
+  XLSX.utils.book_append_sheet(wb, ws, t("sheetNameSingle"));
   return wb;
 };
 
@@ -140,6 +159,8 @@ window.sortExpenseRows = function (rows) {
 };
 
 // 업로드된 지점 엑셀 파일(위 buildWorkbook 형식)을 파싱해서 rows 배열로 복원
+// 헤더 문구는 언어별로 다를 수 있으므로(내보낼 때 선택 언어로 기록됨) 문구가 아닌
+// 고정된 컬럼 순서(번호/법인/지역/적용년도월/사용자/일시/단위/금액/CNY환산액/접대처/인원수/비고/결재구분)로 읽습니다.
 window.parseWorkbookFile = function (file) {
   return file.arrayBuffer().then(function (buf) {
     var wb = XLSX.read(buf, { type: "array" });
@@ -148,12 +169,12 @@ window.parseWorkbookFile = function (file) {
     var rows = [];
     for (var i = 1; i < aoa.length; i++) {
       var r = aoa[i];
-      if (!r || !r[1] || r[9] === "총액(CNY)") break;
-      if (r[6] === undefined || r[6] === "") continue;
+      if (!r || !r[1]) break;
+      if (r[5] === undefined || r[5] === "") continue;
       rows.push({
-        corp: r[1], region: r[2], yearmonth: r[3], submitter: r[4], office: r[5],
-        date: r[6], currency: r[7], amount: r[8], cnyAmount: r[9], vendor: r[10],
-        headcount: r[11], note: r[12], sourceFile: file.name
+        corp: r[1], region: r[2], yearmonth: r[3], submitter: r[4],
+        date: r[5], currency: r[6], amount: r[7], cnyAmount: r[8], vendor: r[9],
+        headcount: r[10], note: r[11], sourceFile: file.name
       });
     }
     return rows;

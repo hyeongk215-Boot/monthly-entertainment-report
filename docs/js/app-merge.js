@@ -30,7 +30,7 @@
       count++;
       total += Number(r.cnyAmount) || 0;
       var tr = document.createElement("tr");
-      tr.innerHTML = "<td>" + count + "</td><td>" + r.corp + "</td><td>" + window.regionDisplay(r.region, r.office) + "</td><td>" +
+      tr.innerHTML = "<td>" + count + "</td><td>" + window.corpLabel(r.corp) + "</td><td>" + window.regionLabel(r.region) + "</td><td>" +
         (r.submitter || "") + "</td><td>" + r.date + "</td><td>" +
         r.currency + "</td><td>" + r.amount + "</td><td>" + r.cnyAmount + "</td><td>" + r.vendor +
         "</td><td>" + r.headcount + "</td><td>" + (r.note || "") + "</td><td style='font-size:11px;color:var(--muted);'>" + (r.sourceFile || "") + "</td>";
@@ -44,7 +44,13 @@
     var files = Array.from(fileList);
     Promise.all(files.map(function (f) { return window.parseWorkbookFile(f); }))
       .then(function (results) {
-        allRows = allRows.concat.apply([], results);
+        var newRows = [].concat.apply([], results);
+        // 지점마다 다른 언어로 내보냈어도 병합본은 하나의 기준(한국어)으로 통일합니다.
+        newRows.forEach(function (r) {
+          r.corp = window.corpKoFromLabel(r.corp);
+          r.region = window.regionKoFromLabel(r.region);
+        });
+        allRows = allRows.concat(newRows);
         renderPreview();
       });
   }
@@ -53,20 +59,21 @@
     var ymFilter = document.getElementById("ymFilter").value;
     var filtered = window.sortExpenseRows(allRows.filter(function (r) { return !ymFilter || r.yearmonth === ymFilter; }));
     if (!filtered.length) { showToast(t("mergeNoFiles")); return; }
-    var header = ["번호", "법인", "지역", "사용자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "원본파일"];
+    var header = [t("rowNumberCol"), t("corp"), t("region"), t("submitterCol"), t("colDate"), t("colCurrency"),
+      t("colAmount"), t("colCnyAmount"), t("colVendor"), t("colHeadcount"), t("colNote"), t("sourceFileCol")];
     var aoa = [header];
     var total = 0;
     filtered.forEach(function (r, i) {
       total += Number(r.cnyAmount) || 0;
-      aoa.push([i + 1, r.corp, window.regionDisplay(r.region, r.office), r.submitter || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor, r.headcount, r.note || "", r.sourceFile || ""]);
+      aoa.push([i + 1, r.corp, r.region, r.submitter || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor, r.headcount, r.note || "", r.sourceFile || ""]);
     });
     aoa.push([]);
-    aoa.push(["", "", "", "", "", "", "", "총액(CNY)", total]);
+    aoa.push(["", "", "", "", "", "", "", t("totalCnyLabel"), total]);
     var ws = XLSX.utils.aoa_to_sheet(aoa);
     ws["!cols"] = [{ wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 }, { wch: 20 }, { wch: 24 }];
     var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "취합본");
-    XLSX.writeFile(wb, t("fileNamePrefix") + "_취합_" + (ymFilter || "all") + ".xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, t("sheetNameMerged"));
+    XLSX.writeFile(wb, t("fileNamePrefix") + "_" + t("mergedWord") + "_" + (ymFilter || "all") + ".xlsx");
   }
 
   document.addEventListener("DOMContentLoaded", function () {

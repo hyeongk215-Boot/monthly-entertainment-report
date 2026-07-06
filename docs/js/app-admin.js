@@ -118,7 +118,8 @@
     var rows = filteredRows();
     if (!rows.length) { showToast(t("mergeNoFiles")); return; }
     var ym = document.getElementById("adminYm").value;
-    var header = ["번호", "법인", "지역", "사용자", "일시", "단위", "금액", "CNY 환산액", "접대처", "인원수", "비고", "제출일시"];
+    var header = [t("rowNumberCol"), t("corp"), t("region"), t("submitterCol"), t("colDate"), t("colCurrency"),
+      t("colAmount"), t("colCnyAmount"), t("colVendor"), t("colHeadcount"), t("colNote"), t("submittedAtCol")];
     var aoa = [header];
     var total = 0;
     rows.forEach(function (r, i) {
@@ -126,13 +127,13 @@
       aoa.push([i + 1, r.corp, window.regionDisplay(r.region, r.office), r.submittedBy || "", r.date, r.currency, r.amount, r.cnyAmount, r.vendor, r.headcount, r.note || "", r.submittedAt ? new Date(r.submittedAt).toLocaleString() : ""]);
     });
     aoa.push([]);
-    aoa.push(["", "", "", "", "", "", "", "총액(CNY)", total]);
+    aoa.push(["", "", "", "", "", "", "", t("totalCnyLabel"), total]);
     var ws = XLSX.utils.aoa_to_sheet(aoa);
     ws["!cols"] = [{ wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 }, { wch: 20 }, { wch: 18 }];
     var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "취합본");
+    XLSX.utils.book_append_sheet(wb, ws, t("sheetNameMerged"));
     var suffix = corpFilter ? "_" + corpFilter : "";
-    XLSX.writeFile(wb, t("fileNamePrefix") + "_취합_" + ym + suffix + ".xlsx");
+    XLSX.writeFile(wb, t("fileNamePrefix") + "_" + t("mergedWord") + "_" + ym + suffix + ".xlsx");
   }
 
   document.addEventListener("DOMContentLoaded", function () {
