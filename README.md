@@ -50,3 +50,4 @@
 - 법인/지역/통화 목록, 승인 기준 금액: `docs/js/config.js`
 - 다국어 문구: `docs/js/i18n.js`
 
+
