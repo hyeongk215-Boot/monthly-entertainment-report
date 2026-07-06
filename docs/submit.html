@@ -21,7 +21,8 @@
   </div>
 </header>
 <main>
-  <div class="card">
+  <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
+  <div class="card" style="flex:1 1 600px; min-width:0;">
     <h2 data-i18n="submitHeading">접대비 내역 입력</h2>
     <div class="context-bar" id="contextBar"></div>
 
@@ -64,6 +65,22 @@
       <button class="btn-primary" id="serverSubmitBtn" data-i18n="serverSubmitBtn">① 서버로 최종 제출</button>
     </div>
     <div class="note-box" data-i18n="ruleNote"></div>
+  </div>
+
+  <div class="card" style="flex:0 0 300px; width:300px;">
+    <h3 data-i18n="uploadPanelHeading" style="margin-top:0; font-size:16px;"></h3>
+    <p class="desc" data-i18n="uploadPanelDesc" style="font-size:12px;"></p>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn-secondary" id="downloadTemplateBtn" data-i18n="downloadTemplateBtn" style="width:100%;"></button>
+    </div>
+    <div style="margin-top:14px;">
+      <label data-i18n="uploadFileLabel" style="font-size:12px;"></label>
+      <input type="file" id="uploadFileInput" accept=".xlsx" style="width:100%;">
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="uploadBtn" data-i18n="uploadBtn" style="width:100%;"></button>
+    </div>
+  </div>
   </div>
 </main>
 <footer>China Entertainment Expense Collection · YJC / HEUNG-A</footer>

@@ -218,6 +218,62 @@
     });
   }
 
+  // ===== 간편 업로드(엑셀 양식으로 일괄 입력) =====
+  function downloadUploadTemplate() {
+    var header = [t("colDate"), t("colCurrency"), t("colAmount"), t("colCnyAmount"), t("colVendor"), t("colHeadcount"), t("colNote")];
+    var example = ["2026-06-01", "CNY", 1000, 1000, "", "", ""];
+    var aoa = [header, example];
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws["!cols"] = [{ wch: 12 }, { wch: 7 }, { wch: 10 }, { wch: 12 }, { wch: 16 }, { wch: 8 }, { wch: 20 }];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, t("sheetNameSingle"));
+    XLSX.writeFile(wb, t("uploadTemplateFileName") + ".xlsx");
+  }
+
+  function normalizeDateCell(v) {
+    if (v === null || v === undefined || v === "") return "";
+    if (v instanceof Date) {
+      return v.getFullYear() + "-" + String(v.getMonth() + 1).padStart(2, "0") + "-" + String(v.getDate()).padStart(2, "0");
+    }
+    if (typeof v === "number" && window.XLSX && XLSX.SSF && XLSX.SSF.parse_date_code) {
+      var d = XLSX.SSF.parse_date_code(v);
+      if (d) return d.y + "-" + String(d.m).padStart(2, "0") + "-" + String(d.d).padStart(2, "0");
+    }
+    return String(v);
+  }
+
+  function handleUploadFile() {
+    var fileInput = document.getElementById("uploadFileInput");
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) { showToast(t("uploadNoFile")); return; }
+    file.arrayBuffer().then(function (buf) {
+      var wb = XLSX.read(buf, { type: "array" });
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+      var newRows = [];
+      for (var i = 1; i < aoa.length; i++) {
+        var r = aoa[i];
+        if (!r || (!r[0] && !r[2] && !r[4] && !r[6])) continue;
+        var currency = r[1] || "CNY";
+        var amount = r[2] === undefined ? "" : r[2];
+        var cnyAmount = (r[3] === undefined || r[3] === "") ? (currency === "CNY" ? amount : "") : r[3];
+        newRows.push({
+          date: normalizeDateCell(r[0]), currency: currency, amount: amount, cnyAmount: cnyAmount,
+          vendor: r[4] || "", headcount: r[5] === undefined ? "" : r[5], note: r[6] || "", preApproved: false
+        });
+      }
+      if (!newRows.length) { showToast(t("uploadFail")); return; }
+      var wasBlank = rows.length === 1 && !rows[0].date && !rows[0].amount && !rows[0].vendor;
+      rows = wasBlank ? newRows : rows.concat(newRows);
+      renderRows();
+      autosave();
+      fileInput.value = "";
+      showToast(t("uploadSuccess", { n: newRows.length }));
+    }).catch(function () {
+      showToast(t("uploadFail"));
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     renderContextBar();
     document.addEventListener("langchange", function () { renderContextBar(); renderRows(); });
@@ -246,6 +302,8 @@
       document.getElementById("draftSavedAt").textContent = new Date(savedAt).toLocaleString();
       showToast(t("draftRestored") === t("draftRestored") ? (getLang() === "ko" ? "임시저장 완료" : (getLang() === "zh" ? "已暂存" : "Draft saved")) : "");
     });
+    document.getElementById("downloadTemplateBtn").addEventListener("click", downloadUploadTemplate);
+    document.getElementById("uploadBtn").addEventListener("click", handleUploadFile);
     document.getElementById("exportBtn").addEventListener("click", function () { openConfirmModal("export"); });
     document.getElementById("serverSubmitBtn").addEventListener("click", function () { openConfirmModal("server"); });
     document.getElementById("confirmNo").addEventListener("click", closeModal);
