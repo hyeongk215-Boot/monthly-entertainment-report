@@ -1,6 +1,10 @@
 // 공통 유틸 함수 모음
 
-// 최근 N개월 ~ 다음 1개월까지 "YYYY-MM" 목록 생성, 기본값은 전월(규정상 익월 보고 기준)
+// 접대비 관리 규정 시행일(2026-07-01) 이전 월은 선택지에 나오지 않도록 하한선을 고정합니다.
+// 상한선(미래 방향)은 "오늘" 기준으로 매번 새로 계산되므로 별도 수정 없이 매달 자동으로 다음달이 추가됩니다.
+window.MIN_YEARMONTH = "2026-07";
+
+// 하한선(MIN_YEARMONTH) ~ 다음 1개월까지 "YYYY-MM" 목록 생성, 기본값은 전월(규정상 익월 보고 기준)
 window.generateYearMonths = function (back, forward) {
   back = back == null ? 18 : back;
   forward = forward == null ? 1 : forward;
@@ -9,6 +13,7 @@ window.generateYearMonths = function (back, forward) {
   for (var i = -back; i <= forward; i++) {
     var d = new Date(now.getFullYear(), now.getMonth() + i, 1);
     var ym = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    if (ym < window.MIN_YEARMONTH) continue;
     list.push(ym);
   }
   return list.reverse();
@@ -17,7 +22,8 @@ window.generateYearMonths = function (back, forward) {
 window.defaultYearMonth = function () {
   var now = new Date();
   var d = new Date(now.getFullYear(), now.getMonth() - 1, 1); // 전월
-  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  var ym = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  return ym < window.MIN_YEARMONTH ? window.MIN_YEARMONTH : ym;
 };
 
 // 접대비 관리 규정 제2장 제1조 - CNY 환산액 기준 전결권한 분류

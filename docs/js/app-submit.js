@@ -4,7 +4,6 @@
 
   var dKey = window.draftKey(ctx.corp, ctx.region, ctx.yearmonth, ctx.submitter);
   var rows = [];
-  var pendingSubmitAction = null; // "server" | "export"
 
   function emptyRow() {
     return { date: "", currency: "CNY", amount: "", cnyAmount: "", vendor: "", headcount: "", note: "", preApproved: false };
@@ -175,9 +174,8 @@
     return rows.reduce(function (s, r) { return s + (Number(r.cnyAmount) || 0); }, 0);
   }
 
-  function openConfirmModal(action) {
+  function openConfirmModal() {
     if (!validate()) return;
-    pendingSubmitAction = action;
     document.getElementById("confirmBody").textContent = t("finalConfirmBody", {
       corp: window.corpLabel(ctx.corp), region: window.regionLabel(ctx.region), yearmonth: ctx.yearmonth, submitter: ctx.submitter,
       rows: rows.length, total: totalCnyValue().toLocaleString()
@@ -187,12 +185,6 @@
 
   function closeModal() {
     document.getElementById("confirmModal").classList.remove("show");
-    pendingSubmitAction = null;
-  }
-
-  function doExport() {
-    window.exportContextRows(ctx, rows);
-    showToast(t("exportSuccess"));
   }
 
   function doServerSubmit() {
@@ -304,14 +296,11 @@
     });
     document.getElementById("downloadTemplateBtn").addEventListener("click", downloadUploadTemplate);
     document.getElementById("uploadBtn").addEventListener("click", handleUploadFile);
-    document.getElementById("exportBtn").addEventListener("click", function () { openConfirmModal("export"); });
-    document.getElementById("serverSubmitBtn").addEventListener("click", function () { openConfirmModal("server"); });
+    document.getElementById("serverSubmitBtn").addEventListener("click", openConfirmModal);
     document.getElementById("confirmNo").addEventListener("click", closeModal);
     document.getElementById("confirmYes").addEventListener("click", function () {
-      var action = pendingSubmitAction;
       closeModal();
-      if (action === "export") doExport();
-      if (action === "server") doServerSubmit();
+      doServerSubmit();
     });
   });
 })();
