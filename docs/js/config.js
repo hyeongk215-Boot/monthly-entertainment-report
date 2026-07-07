@@ -12,7 +12,7 @@ window.APP_CONFIG = {
 
   // 법인 목록 (ko 값이 저장/보고 기준 값입니다. zh/en은 화면 표시용 번역만 담당)
   CORPORATIONS: [
-    { ko: "YJC 포워딩", zh: "裕佳昌 货运代理", en: "YJC Forwarding" },
+    { ko: "YJC 포워딩", zh: "裕佳昌 货代", en: "YJC Forwarding" },
     { ko: "상해물류센터", zh: "上海 物流中心", en: "YJC CY&WH" },
     { ko: "흥아물류", zh: "兴亚物流", en: "Heung-A Logistics" },
     { ko: "윤봉물류", zh: "润峰物流", en: "Runfeng" },

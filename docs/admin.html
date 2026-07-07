@@ -66,7 +66,7 @@
             <th data-i18n="colNote"></th>
             <th data-i18n="adminPreApprovalCol"></th>
             <th data-i18n="submittedAtCol"></th>
-            <th data-i18n="colDelete"></th>
+            <th><span data-i18n="colDelete"></span> <input type="checkbox" id="selectAllCheckbox"></th>
           </tr>
         </thead>
         <tbody id="previewBody"></tbody>
@@ -74,6 +74,7 @@
     </div>
     <div class="btn-row">
       <button class="btn-primary" id="downloadBtn" data-i18n="adminDownload"></button>
+      <button class="btn-danger" id="deleteSelectedBtn" data-i18n="adminDeleteSelectedBtn"></button>
     </div>
   </div>
 </main>

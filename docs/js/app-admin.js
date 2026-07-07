@@ -48,15 +48,19 @@
     document.getElementById("filterAllWrap").style.display = corpFilter ? "block" : "none";
   }
 
-  function deleteEntry(id) {
-    if (!confirm(t("adminDeleteConfirm"))) return;
+  function deleteSelected() {
+    var ids = Array.from(document.querySelectorAll(".row-select:checked")).map(function (cb) { return cb.dataset.id; });
+    if (ids.length === 0) { showToast(t("adminDeleteSelectedNone")); return; }
+    if (!confirm(t("adminDeleteConfirm", { n: ids.length }))) return;
     var client = window.getSupabaseClient();
     var key = document.getElementById("adminKey").value;
     if (!client) { showToast(t("adminDeleteFail")); return; }
-    client.rpc("delete_entry", { p_id: id, p_admin_key: key }).then(function (res) {
-      if (res.error) throw res.error;
+    Promise.all(ids.map(function (id) {
+      return client.rpc("delete_entry", { p_id: id, p_admin_key: key });
+    })).then(function (results) {
+      if (results.some(function (r) { return r.error; })) throw new Error("delete_failed");
       showToast(t("adminDeleteSuccess"));
-      lastData.rows = lastData.rows.filter(function (r) { return String(r.id) !== String(id); });
+      lastData.rows = lastData.rows.filter(function (r) { return ids.indexOf(String(r.id)) === -1; });
       renderAll();
     }).catch(function () {
       showToast(t("adminDeleteFail"));
@@ -76,14 +80,13 @@
         (r.submittedBy || "") + "</td><td>" + r.date + "</td><td>" +
         r.currency + "</td><td>" + r.amount + "</td><td>" + r.cnyAmount + "</td><td>" + r.vendor +
         "</td><td>" + r.headcount + "</td><td>" + (r.note || "") + "</td><td>" + preApprovalText + "</td><td style='font-size:11px;color:var(--muted);'>" + (r.submittedAt ? new Date(r.submittedAt).toLocaleString() : "") + "</td>" +
-        "<td><button class='btn-danger del-btn' data-id='" + r.id + "' style='font-size:11px;padding:5px 8px;'>" + t("adminDeleteBtn") + "</button></td>";
+        "<td style='text-align:center;'><input type='checkbox' class='row-select' data-id='" + r.id + "'></td>";
       body.appendChild(tr);
     });
     document.getElementById("totalRows").textContent = rows.length;
     document.getElementById("totalCny").textContent = total.toLocaleString(undefined, { maximumFractionDigits: 2 });
-    body.querySelectorAll(".del-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () { deleteEntry(btn.dataset.id); });
-    });
+    var selectAll = document.getElementById("selectAllCheckbox");
+    if (selectAll) selectAll.checked = false;
   }
 
   function renderAll() {
@@ -133,6 +136,10 @@
     document.addEventListener("langchange", fillYm);
     document.getElementById("fetchBtn").addEventListener("click", fetchData);
     document.getElementById("downloadBtn").addEventListener("click", downloadAggregate);
+    document.getElementById("deleteSelectedBtn").addEventListener("click", deleteSelected);
+    document.getElementById("selectAllCheckbox").addEventListener("change", function (e) {
+      document.querySelectorAll(".row-select").forEach(function (cb) { cb.checked = e.target.checked; });
+    });
     document.getElementById("filterAllBtn").addEventListener("click", function () {
       corpFilter = null;
       renderAll();
