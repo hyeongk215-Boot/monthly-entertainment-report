@@ -52,10 +52,11 @@
   function deleteSelected() {
     var ids = Array.from(document.querySelectorAll(".row-select:checked")).map(function (cb) { return cb.dataset.id; });
     if (ids.length === 0) { showToast(t("adminDeleteSelectedNone")); return; }
-    if (!confirm(t("adminDeleteConfirm", { n: ids.length }))) return;
     var client = window.getSupabaseClient();
     var key = document.getElementById("adminKey").value;
     if (!client) { showToast(t("adminDeleteFail")); return; }
+    if (!key) { showToast(t("adminKeyRequired")); return; }
+    if (!confirm(t("adminDeleteConfirm", { n: ids.length }))) return;
     Promise.all(ids.map(function (id) {
       return client.rpc("delete_entry", { p_id: id, p_admin_key: key });
     })).then(function (results) {
@@ -122,6 +123,7 @@
     var isClosed = closedMonths.indexOf(ym) !== -1;
     var client = window.getSupabaseClient();
     if (!client) { showToast(t("adminCloseFail")); return; }
+    if (!key) { showToast(t("adminKeyRequired")); return; }
     if (!confirm(t(isClosed ? "adminReopenConfirm" : "adminCloseConfirm", { yearmonth: ym }))) return;
     var fn = isClosed ? "reopen_month" : "close_month";
     client.rpc(fn, { p_yearmonth: ym, p_admin_key: key }).then(function (res) {

@@ -117,7 +117,8 @@ window.I18N = {
     adminReopenConfirm: "{yearmonth} 마감을 해제하시겠습니까? 해제하면 지점에서 다시 입력/제출할 수 있게 됩니다.",
     adminCloseSuccess: "마감되었습니다.",
     adminReopenSuccess: "마감이 해제되었습니다.",
-    adminCloseFail: "처리에 실패했습니다. 관리자 코드를 확인해주세요."
+    adminCloseFail: "처리에 실패했습니다. 관리자 코드를 확인해주세요.",
+    adminKeyRequired: "관리자 코드를 먼저 입력해주세요."
   },
   zh: {
     appTitle: "中国法人招待费汇总系统",
@@ -237,7 +238,8 @@ window.I18N = {
     adminReopenConfirm: "确定要解除 {yearmonth} 的截止状态吗？解除后分公司可以重新填报/提交。",
     adminCloseSuccess: "已截止。",
     adminReopenSuccess: "已解除截止。",
-    adminCloseFail: "操作失败，请检查管理员密码。"
+    adminCloseFail: "操作失败，请检查管理员密码。",
+    adminKeyRequired: "请先输入管理员密码。"
   },
   en: {
     appTitle: "Chinese Corporation Entertainment Expense Collection System",
@@ -357,7 +359,8 @@ window.I18N = {
     adminReopenConfirm: "Reopen {yearmonth}? Branches will be able to enter/submit for this month again.",
     adminCloseSuccess: "Closed.",
     adminReopenSuccess: "Reopened.",
-    adminCloseFail: "Failed. Please check the admin key."
+    adminCloseFail: "Failed. Please check the admin key.",
+    adminKeyRequired: "Please enter the admin key first."
   }
 };
 
