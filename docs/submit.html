@@ -25,7 +25,9 @@
   <div class="card" style="flex:1 1 600px; min-width:0;">
     <h2 data-i18n="submitHeading">접대비 내역 입력</h2>
     <div class="context-bar" id="contextBar"></div>
+    <div class="note-box" id="monthClosedBanner" style="display:none; margin-top:14px; background:#fee2e2; border-color:#fca5a5; color:#7f1d1d; font-weight:600;"></div>
 
+    <div id="entryFormArea">
     <div class="table-wrap">
       <table class="exp-table" id="expTable">
         <thead>
@@ -65,9 +67,10 @@
       <button class="btn-secondary" id="exportBtn" data-i18n="exportBtn" style="margin-left:auto;">③ 엑셀 파일로 내보내기</button>
     </div>
     <div class="note-box" data-i18n="ruleNote"></div>
+    </div>
   </div>
 
-  <div class="card" style="flex:0 0 300px; width:300px;">
+  <div class="card" id="uploadPanelCard" style="flex:0 0 300px; width:300px;">
     <h3 data-i18n="uploadPanelHeading" style="margin-top:0; font-size:16px;"></h3>
     <p class="desc" data-i18n="uploadPanelDesc" style="font-size:12px;"></p>
     <div class="btn-row" style="margin-top:0;">

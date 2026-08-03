@@ -31,6 +31,64 @@ create index if not exists idx_entries_corp_region_ym on entries(corp, region, y
 alter table entries enable row level security;
 revoke all on entries from anon, authenticated;
 
+-- ===== 월 마감 =====
+create table if not exists closed_months (
+  yearmonth text primary key,
+  closed_at timestamptz not null default now(),
+  closed_by text
+);
+alter table closed_months enable row level security;
+revoke all on closed_months from anon, authenticated;
+
+-- 마감된 월 목록 조회는 관리자 코드 없이도 가능해야 합니다 (제출 화면에서 안내문을 띄우기 위해 사용).
+create or replace function get_closed_months() returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(yearmonth order by yearmonth), '[]'::jsonb) from closed_months;
+$$;
+
+create or replace function close_month(
+  p_yearmonth text,
+  p_admin_key text
+) returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_admin_key constant text := 'CHANGE_ME_ADMIN_KEY';
+begin
+  if v_admin_key = '' or p_admin_key is distinct from v_admin_key then
+    raise exception 'unauthorized';
+  end if;
+  if p_yearmonth is null then
+    raise exception 'yearmonth_required';
+  end if;
+  insert into closed_months (yearmonth, closed_by) values (p_yearmonth, 'admin')
+  on conflict (yearmonth) do nothing;
+end;
+$$;
+
+create or replace function reopen_month(
+  p_yearmonth text,
+  p_admin_key text
+) returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_admin_key constant text := 'CHANGE_ME_ADMIN_KEY';
+begin
+  if v_admin_key = '' or p_admin_key is distinct from v_admin_key then
+    raise exception 'unauthorized';
+  end if;
+  delete from closed_months where yearmonth = p_yearmonth;
+end;
+$$;
+
 -- ===== 제출 =====
 create or replace function submit_entries(
   p_corp text,
@@ -53,6 +111,9 @@ declare
 begin
   if v_submit_key <> '' and p_submit_key is distinct from v_submit_key then
     raise exception 'invalid_submit_key';
+  end if;
+  if exists (select 1 from closed_months where yearmonth = p_yearmonth) then
+    raise exception 'month_closed';
   end if;
   if p_corp is null or p_region is null or p_yearmonth is null or p_submitted_by is null
      or p_rows is null or jsonb_array_length(p_rows) = 0 then
@@ -149,3 +210,6 @@ $$;
 grant execute on function submit_entries(text, text, text, text, text, text, jsonb) to anon, authenticated;
 grant execute on function get_aggregate(text, text) to anon, authenticated;
 grant execute on function delete_entry(bigint, text) to anon, authenticated;
+grant execute on function get_closed_months() to anon, authenticated;
+grant execute on function close_month(text, text) to anon, authenticated;
+grant execute on function reopen_month(text, text) to anon, authenticated;

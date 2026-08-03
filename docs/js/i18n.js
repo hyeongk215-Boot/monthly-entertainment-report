@@ -42,6 +42,8 @@ window.I18N = {
     confirmNo: "취소",
     submitSuccess: "서버 제출이 완료되었습니다.",
     submitFail: "서버 제출에 실패했습니다. Supabase 설정(config.js의 SUPABASE_URL/SUPABASE_ANON_KEY)을 확인하거나, ③ 엑셀 내보내기 방식을 이용해주세요.",
+    submitFailClosed: "이 달은 마감되어 더 이상 제출할 수 없습니다. 다음달로 이월하여 입력해주세요.",
+    monthClosedBanner: "⚠ {yearmonth} 은(는) 마감되었습니다. 더 이상 입력/제출할 수 없습니다. {nextYearmonth}로 이월하여 입력해주세요. 이미 입력하신 임시저장 내용은 삭제되지 않으니, 본사 담당자에게 문의해주세요.",
     exportSuccess: "엑셀 파일이 다운로드되었습니다. 이 파일을 중국 본사 담당자에게 메일 등으로 전달해주세요.",
     validationEmptyRows: "최소 1건 이상의 접대비 내역을 입력해주세요.",
     validationIncompleteRow: "{n}번째 행의 필수 항목(일시, 금액)을 입력해주세요.",
@@ -105,7 +107,17 @@ window.I18N = {
     preApprovalChecked: "확인됨",
     preApprovalUnchecked: "미확인",
     preApprovalNA: "-",
-    officeRequiredForOther: "지역을 '기타'로 선택하셨습니다. 사무소/지점명을 반드시 입력해주세요."
+    officeRequiredForOther: "지역을 '기타'로 선택하셨습니다. 사무소/지점명을 반드시 입력해주세요.",
+    adminMonthStatus: "이 달 상태",
+    adminMonthOpenBadge: "진행중",
+    adminMonthClosedBadge: "마감됨",
+    adminCloseMonthBtn: "이 달 마감하기",
+    adminReopenMonthBtn: "마감 해제",
+    adminCloseConfirm: "{yearmonth}을(를) 마감하시겠습니까?\n마감 후에는 지점에서 이 달로 더 이상 입력/제출할 수 없습니다 (이미 제출된 데이터는 삭제되지 않습니다).",
+    adminReopenConfirm: "{yearmonth} 마감을 해제하시겠습니까? 해제하면 지점에서 다시 입력/제출할 수 있게 됩니다.",
+    adminCloseSuccess: "마감되었습니다.",
+    adminReopenSuccess: "마감이 해제되었습니다.",
+    adminCloseFail: "처리에 실패했습니다. 관리자 코드를 확인해주세요."
   },
   zh: {
     appTitle: "中国法人招待费汇总系统",
@@ -150,6 +162,8 @@ window.I18N = {
     confirmNo: "取消",
     submitSuccess: "已成功提交至服务器。",
     submitFail: "提交至服务器失败。请检查Supabase设置(config.js中的SUPABASE_URL/SUPABASE_ANON_KEY)，或改用③导出Excel方式。",
+    submitFailClosed: "该月已截止，无法再提交。请结转到下个月填报。",
+    monthClosedBanner: "⚠ {yearmonth} 已截止，无法再填报/提交。请结转到 {nextYearmonth} 填报。已暂存的草稿内容不会被删除，如有疑问请联系总部负责人。",
     exportSuccess: "Excel文件已下载。请将该文件通过邮件等方式发送给中国总部负责人。",
     validationEmptyRows: "请至少填写1条招待费明细。",
     validationIncompleteRow: "请完整填写第{n}行的必填项（日期、金额）。",
@@ -213,7 +227,17 @@ window.I18N = {
     preApprovalChecked: "已确认",
     preApprovalUnchecked: "未确认",
     preApprovalNA: "-",
-    officeRequiredForOther: "您选择了地区“其他”，请务必填写办事处/分公司名称。"
+    officeRequiredForOther: "您选择了地区“其他”，请务必填写办事处/分公司名称。",
+    adminMonthStatus: "本月状态",
+    adminMonthOpenBadge: "进行中",
+    adminMonthClosedBadge: "已截止",
+    adminCloseMonthBtn: "截止本月",
+    adminReopenMonthBtn: "解除截止",
+    adminCloseConfirm: "确定要截止 {yearmonth} 吗？\n截止后分公司将无法再对该月进行填报/提交（已提交的数据不会被删除）。",
+    adminReopenConfirm: "确定要解除 {yearmonth} 的截止状态吗？解除后分公司可以重新填报/提交。",
+    adminCloseSuccess: "已截止。",
+    adminReopenSuccess: "已解除截止。",
+    adminCloseFail: "操作失败，请检查管理员密码。"
   },
   en: {
     appTitle: "Chinese Corporation Entertainment Expense Collection System",
@@ -258,6 +282,8 @@ window.I18N = {
     confirmNo: "Cancel",
     submitSuccess: "Successfully submitted to the server.",
     submitFail: "Server submission failed. Check the Supabase settings (SUPABASE_URL/SUPABASE_ANON_KEY) in config.js, or use the ③ Excel export method instead.",
+    submitFailClosed: "This month is closed and can no longer be submitted. Please carry over into next month.",
+    monthClosedBanner: "⚠ {yearmonth} is closed. You can no longer enter or submit expenses for this month. Please carry over into {nextYearmonth}. Any saved draft is not deleted — please contact the HQ contact with questions.",
     exportSuccess: "Excel file downloaded. Please email this file to the China HQ contact.",
     validationEmptyRows: "Please enter at least one expense entry.",
     validationIncompleteRow: "Please complete required fields (date, amount) on row {n}.",
@@ -321,7 +347,17 @@ window.I18N = {
     preApprovalChecked: "Confirmed",
     preApprovalUnchecked: "Not confirmed",
     preApprovalNA: "-",
-    officeRequiredForOther: "You selected \"Other\" for region. Please enter the office/branch name."
+    officeRequiredForOther: "You selected \"Other\" for region. Please enter the office/branch name.",
+    adminMonthStatus: "This Month's Status",
+    adminMonthOpenBadge: "Open",
+    adminMonthClosedBadge: "Closed",
+    adminCloseMonthBtn: "Close This Month",
+    adminReopenMonthBtn: "Reopen",
+    adminCloseConfirm: "Close {yearmonth}?\nAfter closing, branches will no longer be able to enter or submit for this month (already-submitted data will not be deleted).",
+    adminReopenConfirm: "Reopen {yearmonth}? Branches will be able to enter/submit for this month again.",
+    adminCloseSuccess: "Closed.",
+    adminReopenSuccess: "Reopened.",
+    adminCloseFail: "Failed. Please check the admin key."
   }
 };
 

@@ -37,6 +37,26 @@ window.defaultYearMonth = function () {
   return ym < window.MIN_YEARMONTH ? window.MIN_YEARMONTH : ym;
 };
 
+// "YYYY-MM" 다음달 문자열 (마감 안내문에서 "다음달로 이월" 문구에 사용)
+window.nextYearMonth = function (ym) {
+  var parts = String(ym).split("-");
+  var d = new Date(Number(parts[0]), Number(parts[1]), 1);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+};
+
+// ===== 월 마감 여부 조회 (① 서버 제출/집계용) =====
+// 실패 시(네트워크 오류 등) 빈 배열을 반환합니다 — 마감 확인 실패로 정상 제출까지 막지 않기 위함이며,
+// 실제 마감 강제는 서버(submit_entries RPC)에서도 다시 검사하므로 안전합니다.
+window.fetchClosedMonths = function () {
+  var client = window.getSupabaseClient();
+  if (!client) return Promise.resolve([]);
+  return client.rpc("get_closed_months", {}).then(function (res) {
+    return (res.data || []);
+  }).catch(function () {
+    return [];
+  });
+};
+
 // 접대비 관리 규정 제2장 제1조 - CNY 환산액 기준 전결권한 분류
 window.classifyTier = function (cnyAmount) {
   var tiers = window.APP_CONFIG.APPROVAL_TIERS;

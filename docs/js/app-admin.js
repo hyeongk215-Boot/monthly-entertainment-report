@@ -1,6 +1,7 @@
 (function () {
   var lastData = null;
   var corpFilter = null; // 클릭한 법인(ko값)만 보기, null이면 전체
+  var closedMonths = [];
 
   function showToast(msg) {
     var el = document.getElementById("toast");
@@ -92,6 +93,44 @@
   function renderAll() {
     renderStatusGrid((lastData && lastData.submissions) || []);
     renderTable();
+    renderMonthStatus();
+  }
+
+  // ===== 월 마감 =====
+  function renderMonthStatus() {
+    var ym = document.getElementById("adminYm").value;
+    var isClosed = closedMonths.indexOf(ym) !== -1;
+    var badge = document.getElementById("monthStatusBadge");
+    badge.textContent = t(isClosed ? "adminMonthClosedBadge" : "adminMonthOpenBadge");
+    badge.className = "badge " + (isClosed ? "badge-special" : "badge-general");
+    var btn = document.getElementById("closeMonthBtn");
+    btn.textContent = t(isClosed ? "adminReopenMonthBtn" : "adminCloseMonthBtn");
+  }
+
+  function refreshClosedMonths() {
+    var client = window.getSupabaseClient();
+    if (!client) return Promise.resolve();
+    return client.rpc("get_closed_months", {}).then(function (res) {
+      closedMonths = res.data || [];
+      renderMonthStatus();
+    });
+  }
+
+  function toggleMonthClosed() {
+    var ym = document.getElementById("adminYm").value;
+    var key = document.getElementById("adminKey").value;
+    var isClosed = closedMonths.indexOf(ym) !== -1;
+    var client = window.getSupabaseClient();
+    if (!client) { showToast(t("adminCloseFail")); return; }
+    if (!confirm(t(isClosed ? "adminReopenConfirm" : "adminCloseConfirm", { yearmonth: ym }))) return;
+    var fn = isClosed ? "reopen_month" : "close_month";
+    client.rpc(fn, { p_yearmonth: ym, p_admin_key: key }).then(function (res) {
+      if (res.error) throw res.error;
+      showToast(t(isClosed ? "adminReopenSuccess" : "adminCloseSuccess"));
+      return refreshClosedMonths();
+    }).catch(function () {
+      showToast(t("adminCloseFail"));
+    });
   }
 
   function fetchData() {
@@ -133,7 +172,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     fillYm();
-    document.addEventListener("langchange", fillYm);
+    document.addEventListener("langchange", function () { fillYm(); renderMonthStatus(); });
     document.getElementById("fetchBtn").addEventListener("click", fetchData);
     document.getElementById("downloadBtn").addEventListener("click", downloadAggregate);
     document.getElementById("deleteSelectedBtn").addEventListener("click", deleteSelected);
@@ -144,5 +183,8 @@
       corpFilter = null;
       renderAll();
     });
+    document.getElementById("adminYm").addEventListener("change", renderMonthStatus);
+    document.getElementById("closeMonthBtn").addEventListener("click", toggleMonthClosed);
+    refreshClosedMonths();
   });
 })();

@@ -207,9 +207,23 @@
       if (res.error) throw res.error;
       showToast(t("submitSuccess"));
       window.clearDraft(dKey);
-    }).catch(function () {
-      showToast(t("submitFail"));
+    }).catch(function (err) {
+      if (err && String(err.message || "").indexOf("month_closed") !== -1) {
+        showToast(t("submitFailClosed"));
+        applyMonthClosed();
+      } else {
+        showToast(t("submitFail"));
+      }
     });
+  }
+
+  // ===== 월 마감 확인 =====
+  function applyMonthClosed() {
+    document.getElementById("entryFormArea").style.display = "none";
+    document.getElementById("uploadPanelCard").style.display = "none";
+    var banner = document.getElementById("monthClosedBanner");
+    banner.textContent = t("monthClosedBanner", { yearmonth: ctx.yearmonth, nextYearmonth: window.nextYearMonth(ctx.yearmonth) });
+    banner.style.display = "block";
   }
 
   // ===== 간편 업로드(엑셀 양식으로 일괄 입력) =====
@@ -270,7 +284,14 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     renderContextBar();
-    document.addEventListener("langchange", function () { renderContextBar(); renderRows(); });
+    document.addEventListener("langchange", function () {
+      renderContextBar();
+      renderRows();
+      if (document.getElementById("monthClosedBanner").style.display !== "none") applyMonthClosed();
+    });
+    window.fetchClosedMonths().then(function (closed) {
+      if (closed.indexOf(ctx.yearmonth) !== -1) applyMonthClosed();
+    });
 
     var draft = window.loadDraft(dKey);
     if (draft && draft.rows && draft.rows.length) {
