@@ -95,6 +95,29 @@
     renderStatusGrid((lastData && lastData.submissions) || []);
     renderTable();
     renderMonthStatus();
+    renderCorpSummary();
+  }
+
+  // ===== 법인별 요약 (건수/CNY 총액) =====
+  function renderCorpSummary() {
+    var rows = (lastData && lastData.rows) || [];
+    var ym = document.getElementById("adminYm").value;
+    var parts = ym.split("-");
+    var byCorp = {};
+    rows.forEach(function (r) {
+      if (!byCorp[r.corp]) byCorp[r.corp] = { count: 0, total: 0 };
+      byCorp[r.corp].count += 1;
+      byCorp[r.corp].total += Number(r.cnyAmount) || 0;
+    });
+    var lines = [t("adminCorpSummaryTitle", { year: parts[0], month: Number(parts[1]) })];
+    window.APP_CONFIG.CORPORATIONS.forEach(function (corpItem) {
+      if (corpItem.ko === "기타") return;
+      var s = byCorp[corpItem.ko] || { count: 0, total: 0 };
+      lines.push(t("adminCorpSummaryLine", {
+        corp: window.corpLabel(corpItem.ko), count: s.count, total: s.total.toLocaleString(undefined, { maximumFractionDigits: 2 })
+      }));
+    });
+    document.getElementById("corpSummaryText").textContent = lines.join("\n");
   }
 
   // ===== 월 마감 =====
@@ -187,6 +210,10 @@
     });
     document.getElementById("adminYm").addEventListener("change", renderMonthStatus);
     document.getElementById("closeMonthBtn").addEventListener("click", toggleMonthClosed);
+    document.getElementById("corpSummaryCopyBtn").addEventListener("click", function () {
+      navigator.clipboard.writeText(document.getElementById("corpSummaryText").textContent)
+        .then(function () { showToast(t("adminCorpSummaryCopied")); });
+    });
     refreshClosedMonths();
   });
 })();

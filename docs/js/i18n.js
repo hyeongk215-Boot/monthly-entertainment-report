@@ -118,7 +118,12 @@ window.I18N = {
     adminCloseSuccess: "마감되었습니다.",
     adminReopenSuccess: "마감이 해제되었습니다.",
     adminCloseFail: "처리에 실패했습니다. 관리자 코드를 확인해주세요.",
-    adminKeyRequired: "관리자 코드를 먼저 입력해주세요."
+    adminKeyRequired: "관리자 코드를 먼저 입력해주세요.",
+    adminCorpSummaryHeading: "법인별 요약",
+    adminCorpSummaryTitle: "{year}년{month}월 접대비 요약",
+    adminCorpSummaryLine: "* {corp} : 총 {count}건, CNY {total} 발생",
+    adminCorpSummaryCopyBtn: "요약 복사",
+    adminCorpSummaryCopied: "요약이 클립보드에 복사되었습니다."
   },
   zh: {
     appTitle: "中国法人招待费汇总系统",
@@ -239,7 +244,12 @@ window.I18N = {
     adminCloseSuccess: "已截止。",
     adminReopenSuccess: "已解除截止。",
     adminCloseFail: "操作失败，请检查管理员密码。",
-    adminKeyRequired: "请先输入管理员密码。"
+    adminKeyRequired: "请先输入管理员密码。",
+    adminCorpSummaryHeading: "各法人汇总",
+    adminCorpSummaryTitle: "{year}年{month}月招待费汇总",
+    adminCorpSummaryLine: "* {corp} : 共{count}笔，CNY {total}",
+    adminCorpSummaryCopyBtn: "复制汇总",
+    adminCorpSummaryCopied: "汇总已复制到剪贴板。"
   },
   en: {
     appTitle: "Chinese Corporation Entertainment Expense Collection System",
@@ -360,7 +370,12 @@ window.I18N = {
     adminCloseSuccess: "Closed.",
     adminReopenSuccess: "Reopened.",
     adminCloseFail: "Failed. Please check the admin key.",
-    adminKeyRequired: "Please enter the admin key first."
+    adminKeyRequired: "Please enter the admin key first.",
+    adminCorpSummaryHeading: "Summary by Company",
+    adminCorpSummaryTitle: "{year}-{month} Entertainment Expense Summary",
+    adminCorpSummaryLine: "* {corp}: {count} entries, CNY {total}",
+    adminCorpSummaryCopyBtn: "Copy Summary",
+    adminCorpSummaryCopied: "Summary copied to clipboard."
   }
 };
 
