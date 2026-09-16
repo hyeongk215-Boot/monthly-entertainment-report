@@ -5,27 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>중국법인 접대비 취합 시스템</title>
 <link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("erpTheme") === "dark" ? "dark" : "light");</script>
 </head>
 <body>
-<header class="topbar">
-  <h1 data-i18n="appTitle">중국법인 접대비 취합 시스템</h1>
-  <div style="display:flex; align-items:center; gap:18px; flex-wrap:wrap;">
-    <nav class="nav-links">
-      <a href="index.html" data-i18n="backBtn">← 뒤로</a>
-    </nav>
-    <div class="lang-switch">
-      <button class="lang-btn" data-lang="ko">한국어</button>
-      <button class="lang-btn" data-lang="zh">中文</button>
-      <button class="lang-btn" data-lang="en">English</button>
+<div class="app-shell">
+  <aside class="app-sidebar">
+    <a class="app-brand" href="index.html"><span class="app-brand-text" data-i18n="moduleName"></span></a>
+
+    <div class="app-nav-label" data-i18n="navSecMain"></div>
+    <a class="app-nav-item" href="index.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="app-nav-text" data-i18n="navQuery"></span>
+    </a>
+    <a class="app-nav-item active" href="submit.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="app-nav-text" data-i18n="navSubmit"></span>
+    </a>
+
+    <div class="app-nav-label" data-i18n="navSecAdmin"></div>
+    <a class="app-nav-item" href="merge.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 12h-6a6 6 0 0 1-6-6"/><circle cx="18" cy="12" r="3"/></svg>
+      <span class="app-nav-text" data-i18n="navMerge"></span>
+    </a>
+    <a class="app-nav-item" href="admin.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4v5c0 4.4-3.4 8.2-8 9-4.6-.8-8-4.6-8-9V7z"/></svg>
+      <span class="app-nav-text" data-i18n="navAdminShort"></span>
+    </a>
+
+    <div class="app-sidebar-foot">
+      <button class="app-theme-btn" id="themeToggle" aria-label="theme"></button>
+      <button class="lang-btn" data-lang="ko">한</button>
+      <button class="lang-btn" data-lang="zh">中</button>
     </div>
-  </div>
-</header>
+  </aside>
+
+  <div class="app-main">
+    <header class="topbar">
+      <h1 data-i18n="appTitle"></h1>
+    </header>
 <main>
   <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
   <div class="card" style="flex:1 1 600px; min-width:0;">
     <h2 data-i18n="submitHeading">접대비 내역 입력</h2>
     <div class="context-bar" id="contextBar"></div>
-    <div class="note-box" id="monthClosedBanner" style="display:none; margin-top:14px; background:#fee2e2; border-color:#fca5a5; color:#7f1d1d; font-weight:600;"></div>
+    <div class="note-box" id="monthClosedBanner" style="display:none; margin-top:14px; background:var(--danger-bg); border-color:var(--danger); color:var(--danger); font-weight:600;"></div>
 
     <div id="entryFormArea">
     <div class="table-wrap">
@@ -85,8 +108,10 @@
     </div>
   </div>
   </div>
-</main>
-<footer>China Entertainment Expense Collection · YJC / HEUNG-A</footer>
+    </main>
+    <footer>China Entertainment Expense Collection · YJC / HEUNG-A</footer>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <div class="modal-overlay" id="confirmModal">

@@ -1,5 +1,11 @@
 window.I18N = {
   ko: {
+    moduleName: "접대비",
+    navSecMain: "조회",
+    navSecAdmin: "관리",
+    navQuery: "접대비 조회",
+    navSubmit: "접대비 제출",
+    navAdminShort: "관리자 화면",
     appTitle: "중국법인 접대비 취합 시스템",
     langName: "한국어",
     navIndex: "제출 시작",
@@ -126,6 +132,12 @@ window.I18N = {
     adminCorpSummaryCopied: "요약이 클립보드에 복사되었습니다."
   },
   zh: {
+    moduleName: "招待费",
+    navSecMain: "查询",
+    navSecAdmin: "管理",
+    navQuery: "招待费查询",
+    navSubmit: "招待费提交",
+    navAdminShort: "管理员页面",
     appTitle: "中国法人招待费汇总系统",
     langName: "中文",
     navIndex: "开始填报",
