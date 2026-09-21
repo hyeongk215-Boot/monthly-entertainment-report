@@ -26,7 +26,9 @@ window.APP_CONFIG = {
     { ko: "상해", zh: "上海", en: "Shanghai" },
     { ko: "닝보", zh: "宁波", en: "Ningbo" },
     { ko: "남경", zh: "南京", en: "Nanjing" },
-    { ko: "충칭", zh: "重庆", en: "Chongqing" },
+    // ko는 DB에 저장된 값이라 바꾸면 이미 입력된 데이터와 어긋납니다.
+    // 본사 양식 표기가 "중경"이므로 화면 표기만 koLabel로 덮어씁니다.
+    { ko: "충칭", koLabel: "중경", zh: "重庆", en: "Chongqing" },
     { ko: "천진", zh: "天津", en: "Tianjin" },
     { ko: "대련", zh: "大连", en: "Dalian" },
     { ko: "청도", zh: "青岛", en: "Qingdao" },

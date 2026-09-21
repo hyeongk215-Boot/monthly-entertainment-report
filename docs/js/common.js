@@ -77,15 +77,22 @@ function findByKo(list, koValue) {
   }
   return null;
 }
+// ko값은 저장/병합 기준 키라서 바꿀 수 없습니다. 화면 표기만 다르게 하고 싶으면
+// config.js 항목에 koLabel을 넣습니다 (예: 저장값은 "충칭", 본사 양식 표기는 "중경").
+function pickLabel(item, lang) {
+  lang = lang || getLang();
+  if (lang === "ko" && item.koLabel) return item.koLabel;
+  return item[lang] || item.koLabel || item.ko;
+}
 window.corpLabel = function (koValue, lang) {
   var item = findByKo(window.APP_CONFIG.CORPORATIONS, koValue);
   if (!item) return koValue;
-  return item[lang || getLang()] || item.ko;
+  return pickLabel(item, lang);
 };
 window.regionLabel = function (koValue, lang) {
   var item = findByKo(window.APP_CONFIG.REGIONS, koValue);
   if (!item) return koValue;
-  return item[lang || getLang()] || item.ko;
+  return pickLabel(item, lang);
 };
 
 // 지역을 "기타"로 선택한 경우, 취합 화면에서는 지역 대신 입력받은 사무소/지점명을 표시합니다.
@@ -100,7 +107,8 @@ window.regionDisplay = function (koValue, office, lang) {
 function findKoByAnyLabel(list, anyValue) {
   for (var i = 0; i < list.length; i++) {
     var item = list[i];
-    if (item.ko === anyValue || item.zh === anyValue || item.en === anyValue) return item.ko;
+    // koLabel("중경")로 내보낸 파일도 원래 ko값("충칭")으로 되돌려야 병합본이 갈라지지 않습니다.
+    if (item.ko === anyValue || item.koLabel === anyValue || item.zh === anyValue || item.en === anyValue) return item.ko;
   }
   return anyValue;
 }
