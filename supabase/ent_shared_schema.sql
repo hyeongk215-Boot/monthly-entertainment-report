@@ -1,6 +1,9 @@
--- 운영 재실행 금지: 실행하면 운영 관리자키가 자리표시로 덮임
--- 출처: monthly-entertainment-report/supabase/schema.sql (로컬 입력만 사용).
--- 운영 미대조: 운영 DB를 조회하지 않았으며 운영 본문과 바이트 단위 일치를 보장하지 않습니다.
+-- 운영 재실행 금지: 실행하면 운영 관리자키가 자리표시로 덮입니다.
+-- 본문은 옛 schema.sql을 이름만 ent_로 바꾼 참고용 복사본입니다.
+-- 운영 본문과 대조·검증하지 않았습니다.
+-- 관리자키 자리표시는 어디서나 CHANGE_ME_ADMIN_KEY만 사용합니다.
+-- 제출키는 Shawn 결정에 따라 의도적으로 ''(빈 문자열)입니다.
+-- 전환 후 2단계 서버 입력 검증 전까지 덮어쓰기 위험을 감수합니다.
 -- ent_entries identity 시퀀스 이름: ent_entries_id_seq
 
 create table if not exists ent_entries (
