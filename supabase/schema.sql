@@ -207,9 +207,15 @@ begin
 end;
 $$;
 
-grant execute on function submit_entries(text, text, text, text, text, text, jsonb) to anon, authenticated;
-grant execute on function get_aggregate(text, text) to anon, authenticated;
-grant execute on function delete_entry(bigint, text) to anon, authenticated;
-grant execute on function get_closed_months() to anon, authenticated;
-grant execute on function close_month(text, text) to anon, authenticated;
-grant execute on function reopen_month(text, text) to anon, authenticated;
+REVOKE EXECUTE ON FUNCTION submit_entries(text, text, text, text, text, text, jsonb) FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION submit_entries(text, text, text, text, text, text, jsonb) TO anon;
+REVOKE EXECUTE ON FUNCTION get_aggregate(text, text) FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION get_aggregate(text, text) TO anon;
+REVOKE EXECUTE ON FUNCTION delete_entry(bigint, text) FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION delete_entry(bigint, text) TO anon;
+REVOKE EXECUTE ON FUNCTION get_closed_months() FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION get_closed_months() TO anon;
+REVOKE EXECUTE ON FUNCTION close_month(text, text) FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION close_month(text, text) TO anon;
+REVOKE EXECUTE ON FUNCTION reopen_month(text, text) FROM PUBLIC, authenticated;
+GRANT EXECUTE ON FUNCTION reopen_month(text, text) TO anon;
