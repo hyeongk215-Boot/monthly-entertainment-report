@@ -198,7 +198,7 @@
   function doServerSubmit() {
     var client = window.getSupabaseClient();
     if (!client) { showToast(t("submitFail")); return; }
-    client.rpc("submit_entries", {
+    client.rpc("ent_submit_entries", {
       p_corp: ctx.corp, p_region: ctx.region, p_yearmonth: ctx.yearmonth,
       p_office: ctx.office || "", p_submitted_by: ctx.submitter,
       p_submit_key: window.APP_CONFIG.SUBMIT_KEY || "",
