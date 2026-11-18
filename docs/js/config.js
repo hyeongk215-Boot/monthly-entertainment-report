@@ -3,8 +3,8 @@ window.APP_CONFIG = {
   // Supabase 프로젝트 생성 후 이 두 값을 채우면 "① 서버로 제출" 기능이 활성화됩니다.
   // Supabase 대시보드 > Project Settings > API 에서 확인 (Project URL / anon public key)
   // 자세한 절차는 supabase/README-deploy.md 참고
-  SUPABASE_URL: "https://ipnuhxmvsyuerlvqeyoa.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_juVphLpldO2Ml5JiA3cKaw_nh0YjN2A",
+  SUPABASE_URL: "https://pobpxmqobeqrvuncobnh.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_bMGDHv8z9Shw1IJ39Wj10w_0O3G2g6U",
 
   // 지점 담당자가 서버 제출 시 입력하는 간단한 공용 비밀번호(스팸 방지용, 필수 아님)
   // supabase/schema.sql 의 submit_entries 함수 안 CHANGE_ME_SUBMIT_KEY 와 동일한 값을 넣으세요.
