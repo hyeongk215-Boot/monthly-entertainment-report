@@ -58,7 +58,7 @@
     if (!key) { showToast(t("adminKeyRequired")); return; }
     if (!confirm(t("adminDeleteConfirm", { n: ids.length }))) return;
     Promise.all(ids.map(function (id) {
-      return client.rpc("delete_entry", { p_id: id, p_admin_key: key });
+      return client.rpc("ent_delete_entry", { p_id: id, p_admin_key: key });
     })).then(function (results) {
       if (results.some(function (r) { return r.error; })) throw new Error("delete_failed");
       showToast(t("adminDeleteSuccess"));
@@ -134,7 +134,7 @@
   function refreshClosedMonths() {
     var client = window.getSupabaseClient();
     if (!client) return Promise.resolve();
-    return client.rpc("get_closed_months", {}).then(function (res) {
+    return client.rpc("ent_get_closed_months", {}).then(function (res) {
       closedMonths = res.data || [];
       renderMonthStatus();
     });
@@ -148,7 +148,7 @@
     if (!client) { showToast(t("adminCloseFail")); return; }
     if (!key) { showToast(t("adminKeyRequired")); return; }
     if (!confirm(t(isClosed ? "adminReopenConfirm" : "adminCloseConfirm", { yearmonth: ym }))) return;
-    var fn = isClosed ? "reopen_month" : "close_month";
+    var fn = isClosed ? "ent_reopen_month" : "ent_close_month";
     client.rpc(fn, { p_yearmonth: ym, p_admin_key: key }).then(function (res) {
       if (res.error) throw res.error;
       showToast(t(isClosed ? "adminReopenSuccess" : "adminCloseSuccess"));
@@ -163,7 +163,7 @@
     var key = document.getElementById("adminKey").value;
     var ym = document.getElementById("adminYm").value;
     if (!client) { showToast(t("adminFetchFail")); return; }
-    client.rpc("get_aggregate", { p_yearmonth: ym, p_admin_key: key }).then(function (res) {
+    client.rpc("ent_get_aggregate", { p_yearmonth: ym, p_admin_key: key }).then(function (res) {
       if (res.error) throw res.error;
       lastData = res.data;
       corpFilter = null;

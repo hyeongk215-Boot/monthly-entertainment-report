@@ -50,7 +50,7 @@ window.nextYearMonth = function (ym) {
 window.fetchClosedMonths = function () {
   var client = window.getSupabaseClient();
   if (!client) return Promise.resolve([]);
-  return client.rpc("get_closed_months", {}).then(function (res) {
+  return client.rpc("ent_get_closed_months", {}).then(function (res) {
     return (res.data || []);
   }).catch(function () {
     return [];
