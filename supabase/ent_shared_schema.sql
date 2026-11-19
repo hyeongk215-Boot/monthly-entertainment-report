@@ -96,6 +96,7 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.ent_reopen_month(text, text) FROM PUBLIC, authenticated;
 GRANT EXECUTE ON FUNCTION public.ent_reopen_month(text, text) TO anon;
 
+-- 같은 법인/지역/적용년월/제출자로 재제출하면 그 제출자의 기존 내역만 덮어씀
 create function ent_submit_entries(
   p_corp text,
   p_region text,
@@ -126,7 +127,6 @@ begin
     raise exception 'invalid_payload';
   end if;
 
-  -- 같은 법인/지역/적용년월/제출자로 재제출하면 그 제출자의 기존 내역만 덮어씀
   delete from ent_entries
    where corp = p_corp and region = p_region and yearmonth = p_yearmonth and submitted_by = p_submitted_by;
 
